@@ -42,8 +42,9 @@ jobs:
         pytest
     - name: Integration test
       run: |
-        mv domains.lst domains.lst.back
-        ./app.py > /dev/null 2>&1 & echo $! >pid.file
+        #!/usr/bin/env bash
+        mv -f domains.lst domains.lst.back
+        python app.py > /dev/null 2>&1 & echo $! > pid.file
         sleep 4
         curl -s localhost:8080 | grep 'SSL checker dashboard'
         kill $(cat pid.file)
