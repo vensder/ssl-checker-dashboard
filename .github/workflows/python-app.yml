@@ -44,9 +44,9 @@ jobs:
       run: |
         #!/usr/bin/env bash
         set -e -x
-        mv -f domains.lst domains.lst.back
+        echo 'google.com' > domains.lst
         python app.py > /dev/null 2>&1 & echo $! > pid.file
         sleep 10
-        curl -s localhost:8080 | grep 'SSL checker dashboard'
+        curl -s localhost:8080 | grep 'google.com'
         kill $(cat pid.file)
 
