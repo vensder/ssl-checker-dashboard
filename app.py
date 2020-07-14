@@ -77,13 +77,29 @@ def update_domains_days_in_redis(domains_set):
         r.set(result_tuple[0], result_tuple[1])
 
 
-def get_info_from_redis(domains_set):
+def get_info_from_redis(domains_set, info_type="all"):
+    """
+    Returns the set of tupples with domain name and days or errors.
+
+            Parameters:
+                    domains_set (set): A set from domain names (str)
+                    info_type (str): A type of returning info ("all", "days" or "errors")
+
+            Returns:
+                    output_set (set): The set of tupples (domain(str), days(int)) or
+                        (domain(str), error(str)) or both in second element of set
+
+    """
     output_set = set()
     for domain in domains_set:
-        days = r.get(domain).decode("utf-8")
-        if days.isnumeric():
-            days = int(days)
-        output_set.add((domain, days))
+        info = r.get(domain).decode("utf-8")
+        if info_type == "days" and not info.isnumeric():
+            continue
+        if info_type == "errors" and info.isnumeric():
+            continue
+        if info.isnumeric():
+            info = int(info)
+        output_set.add((domain, info))
     return output_set
 
 
@@ -113,11 +129,36 @@ def static(path):
 
 
 @route('/')
+@route('/all')
 @route('/hosts')
 @route('/domains')
 def show_hosts():
     if use_redis:
-        domains_info = get_info_from_redis(domains_set)
+        domains_info = get_info_from_redis(domains_set, info_type="all")
+    else:
+        domains_info = domains_days_set
+    return template(
+        'domains',
+        rows=sorted(domains_info),
+        refresh=0)
+
+
+@route('/errors')
+def show_hosts():
+    if use_redis:
+        domains_info = get_info_from_redis(domains_set, info_type="errors")
+    else:
+        domains_info = domains_days_set
+    return template(
+        'domains',
+        rows=sorted(domains_info),
+        refresh=0)
+
+
+@route('/days')
+def show_hosts():
+    if use_redis:
+        domains_info = get_info_from_redis(domains_set, info_type="days")
     else:
         domains_info = domains_days_set
     return template(
