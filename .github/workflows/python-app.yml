@@ -43,6 +43,7 @@ jobs:
     - name: Integration test
       run: |
         #!/usr/bin/env bash
+        set -e -x
         mv -f domains.lst domains.lst.back
         python app.py > /dev/null 2>&1 & echo $! > pid.file
         sleep 4
