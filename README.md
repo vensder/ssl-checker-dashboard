@@ -24,3 +24,9 @@ source env/bin/activate
 pip install -r requirements.txt
 ./app.py
 ```
+
+## Run with gunicorn
+
+```bash
+gunicorn -b 0.0.0.0:8080 app:app
+```
