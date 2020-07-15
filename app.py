@@ -74,7 +74,8 @@ def update_domains_days_in_set(domains_set):
 def update_domains_days_in_redis(domains_set):
     pool = Pool(len(domains_set))
     for result_tuple in pool.imap_unordered(days_before_expiration, domains_set):
-        r.set(result_tuple[0], result_tuple[1])
+        if not r.get(result_tuple[0]):
+            r.set(result_tuple[0], result_tuple[1])
 
 
 def get_info_from_redis(domains_set, info_type="all"):
@@ -171,7 +172,7 @@ def show_hosts():
 if __name__ == '__main__':
     run(host='0.0.0.0', port=8080, debug=True, reloader=True)
 
-# # Run bottle in application mode.
-# # Required in order to get the application working with uWSGI!
-# else:
-#     app = application = default_app()
+# Run bottle in application mode.
+# Required in order to get the application working with WSGI
+else:
+    app = application = default_app()
