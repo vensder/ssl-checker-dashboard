@@ -9,7 +9,7 @@ The dashboard allows you to overview the expiration days for the SSL certificate
 ## How to run locally
 
 ```bash
-virtualenv -p python env
+virtualenv -p python3 env
 source env/bin/activate
 pip install -r requirements.txt
 cd microservices/scheduler && docker-compose up -d
