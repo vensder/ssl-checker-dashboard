@@ -51,6 +51,7 @@ jobs:
         curl -s localhost:8080 | grep 'google.com'
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
-        curl -s localhost:8080/errors | grep 'google.com'
+        curl -s localhost:8080/errors | grep 'notexisting.domain'
         kill $(cat pid.file)
+        cd microservices/scheduler && docker-compose stop
 
