@@ -11,7 +11,7 @@
         %i += 1
         <td>
         %if i == 2:
-            %if not isinstance(col, int) or col < 10:
+            %if not isinstance(col, int) or col < 30:
                 <span class="_{{i}} red">
             %elif col < 60:
                 <span class="_{{i}} yellow">
