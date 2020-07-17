@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.8
 
-from ssl_checks import days_before_expiration
+# from ssl_checks import days_before_expiration
 from bottle import route, run, hook, request, default_app, TEMPLATE_PATH, template, static_file
 from multiprocessing.pool import ThreadPool as Pool
 
@@ -82,14 +82,13 @@ def get_info_from_redis(domains_set, info_type="all"):
     """
     Returns the set of tupples with domain name and days or errors.
 
-            Parameters:
-                    domains_set (set): A set from domain names (str)
-                    info_type (str): A type of returning info ("all", "days" or "errors")
+    Args:
+        domains_set (set): A set from domain names (str)
+        info_type (str): A type of returning info ("all", "days" or "errors")
 
-            Returns:
-                    output_set (set): The set of tupples (domain(str), days(int)) or
-                        (domain(str), error(str)) or both in second element of set
-
+    Returns:
+        output_set (set): The set of tupples (domain(str), days(int)) or
+        (domain(str), error(str)) or both in second element of set
     """
     output_set = set()
     for domain in domains_set:
@@ -104,10 +103,7 @@ def get_info_from_redis(domains_set, info_type="all"):
     return output_set
 
 
-use_redis = is_redis_available()
-
-
-if use_redis:
+if is_redis_available():
     for domain in domains_set:
         if not r.get(domain):
             update_domains_days_in_redis(domains_set)
@@ -134,7 +130,7 @@ def static(path):
 @route('/hosts')
 @route('/domains')
 def show_hosts():
-    if use_redis:
+    if is_redis_available():
         domains_info = get_info_from_redis(domains_set, info_type="all")
     else:
         domains_info = domains_days_set
@@ -146,7 +142,7 @@ def show_hosts():
 
 @route('/errors')
 def show_hosts():
-    if use_redis:
+    if is_redis_available():
         domains_info = get_info_from_redis(domains_set, info_type="errors")
     else:
         domains_info = domains_days_set
@@ -158,7 +154,7 @@ def show_hosts():
 
 @route('/days')
 def show_hosts():
-    if use_redis:
+    if is_redis_available():
         domains_info = get_info_from_redis(domains_set, info_type="days")
     else:
         domains_info = domains_days_set
