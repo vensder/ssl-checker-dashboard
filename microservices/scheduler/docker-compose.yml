@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:6.0.5-alpine
+    ports:
+      - "6379:6379"
+  cron:
+    build: .
+    depends_on:
+      - redis

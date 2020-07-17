@@ -9,19 +9,11 @@ The dashboard allows you to overview the expiration days for the SSL certificate
 ## How to run locally
 
 ```bash
-virtualenv -p python env
+virtualenv -p python3 env
 source env/bin/activate
 pip install -r requirements.txt
-./app.py
-```
-
-## How to run with Redis
-
-```bash
-docker run --rm --name my-redis -p 6379:6379 -d redis:6.0.5-alpine
-virtualenv -p python env
-source env/bin/activate
-pip install -r requirements.txt
+cd microservices/scheduler && docker-compose up -d
+cd -
 ./app.py
 ```
 

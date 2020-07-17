@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.8
 
 import ssl
 import socket
@@ -18,7 +18,7 @@ def expiration_datetime(hostname):
     return datetime.strptime(ssl_info['notAfter'], r'%b %d %H:%M:%S %Y %Z')
 
 
-def days_before_expiration(hostname):
+def tuple_domain_days_before_expiration(hostname):
     try:
         # How many days until SSL certificate will be expired
         days_before = (expiration_datetime(hostname) - datetime.now()).days
@@ -27,3 +27,14 @@ def days_before_expiration(hostname):
         print('Exception in SSL expiration date checks: ',
               e, '| hostname: ', hostname)
         return (hostname, str(e)[0:40] + ' ...')
+
+
+def days_before_expiration(hostname):
+    try:
+        # How many days until SSL certificate will be expired
+        days = (expiration_datetime(hostname) - datetime.now()).days
+        return (days)
+    except Exception as e:
+        print('Exception in SSL expiration date checks: ',
+              e, '| hostname: ', hostname)
+        return (str(e))
