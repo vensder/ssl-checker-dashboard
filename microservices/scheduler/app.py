@@ -66,14 +66,6 @@ def is_redis_available():
     return True
 
 
-# def update_one_record(domain):
-#     if is_redis_available:
-#         r.set(domain, ssl.days_before_expiration(domain))
-#         return True
-#     else:
-#         return False
-
-
 def update_all_domains_in_redis(domains_set):
     pool = Pool(len(domains_set))
     for result_tuple in pool.imap_unordered(ssl.tuple_domain_days_before_expiration, domains_set):
@@ -81,19 +73,11 @@ def update_all_domains_in_redis(domains_set):
             r.set(result_tuple[0], result_tuple[1])
 
 
-# def update_one_by_one():
-#     if is_redis_available():
-#         for domain in domains_set:
-#             if not r.get(domain):
-#                 update_one_record(domain)
-#                 print(f"updated {domain}")
-
-
 def update_all_missing_domains_in_redis():
     from_redis_set = set()
 
     if is_redis_available():
-        for key in r.keys('*'): 
+        for key in r.keys('*'):
             from_redis_set.add(key.decode('utf-8'))
 
     difference = domains_set - from_redis_set
