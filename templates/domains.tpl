@@ -4,28 +4,28 @@
 <table>
 <caption><strong>SSL Certificate Expiration, Days</strong></caption>
 <tr><th>Domain/Hostname</th><th>Days befor expiration</th></tr>
-%for row in rows:
+%for domain in sorted(domains_days):
     <tr>
-    %i = 0
-    %for col in row:
-        %i += 1
+    %for i in [1, 2]:
         <td>
+        %if i == 1:
+            <a href="https://{{domain}}">{{domain}}</a>
+        %end
         %if i == 2:
-            %if not isinstance(col, int) or col < 30:
+            %days = domains_days[domain]
+            %if not isinstance(days, int) or days < 30:
                 <span class="_{{i}} red">
-            %elif col < 60:
+            %elif days < 60:
                 <span class="_{{i}} yellow">
-            %elif col < 90:
+            %elif days < 90:
                 <span class="_{{i}} green">
             %else:
                 <span class="_{{i}} default">
             %end
-            {{col}}
+            {{days}}
         %end
-        %if i == 1:
-            <a href="https://{{col}}">{{col}}</a>
-        %end
-        </span></td>
+            </span>
+        </td>
     %end
     </tr>
 %end

@@ -52,7 +52,6 @@ except Exception as e:
 
 
 domains_set = set(domains)
-domains_days_set = set()
 
 r = redis.Redis(host='redis')
 
@@ -68,7 +67,7 @@ def is_redis_available():
 
 def update_all_domains_in_redis(domains_set):
     pool = Pool(len(domains_set))
-    for result_tuple in pool.imap_unordered(ssl.tuple_domain_days_before_expiration, domains_set):
+    for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
         if not r.get(result_tuple[0]):
             r.set(result_tuple[0], result_tuple[1])
 
@@ -93,3 +92,7 @@ schedule.every(5).seconds.do(update_all_missing_domains_in_redis)
 while True:
     schedule.run_pending()
     time.sleep(1)
+
+# TODO: add TTL
+
+# TODO: add env var for update every N (h, min, sec)
