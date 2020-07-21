@@ -3,7 +3,7 @@
 
 <table>
 <caption><strong>SSL Certificate Expiration, Days</strong></caption>
-<tr><th>#</th><th>Domain/Hostname</th><th>Days befor expiration</th><th>Last update</th></tr>
+<tr><th>#</th><th>Domain/Hostname</th><th>Days befor expiration</th><th>Last info update</th></tr>
 %i = 0
 %for domain in domains_days:
     <tr>
