@@ -55,6 +55,14 @@ def get_info_from_dict(domains_dict, info_type):
         return my_dict
 
 
+def sort_by_value(domains_dict):
+    return {k: v for k, v in sorted(domains_dict.items(), key=lambda item: item[1][0])}
+
+
+def sort_by_key(domains_dict):
+    return dict(sorted(domains_dict.items()))
+
+
 get_all_from_redis()
 
 
@@ -81,7 +89,7 @@ def show_hosts():
         get_all_from_redis()
     return template(
         'domains',
-        domains_days=domains_days_dict,
+        domains_days=sort_by_key(domains_days_dict),
         refresh=0)
 
 
@@ -92,8 +100,8 @@ def show_hosts():
         get_all_from_redis()
     return template(
         'domains',
-        domains_days=get_info_from_dict(
-            domains_dict=domains_days_dict, info_type="errors"),
+        domains_days=sort_by_key(get_info_from_dict(
+            domains_dict=domains_days_dict, info_type="errors")),
         refresh=0)
 
 
@@ -104,11 +112,10 @@ def show_hosts():
         get_all_from_redis()
     return template(
         'domains',
-        domains_days=get_info_from_dict(
-            domains_dict=domains_days_dict, info_type="days"),
+        domains_days=sort_by_value(get_info_from_dict(
+            domains_dict=domains_days_dict, info_type="days")),
         refresh=0)
 
-# TODO: add sorted by days to expire
 
 # TODO: add update outdated from redis
 
