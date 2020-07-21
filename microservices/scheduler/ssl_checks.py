@@ -11,11 +11,24 @@ def expiration_datetime(hostname):
         socket.socket(socket.AF_INET),
         server_hostname=hostname,
     )
-    conn.settimeout(3.0)
+    conn.settimeout(10.0)
     conn.connect((hostname, 443))
     ssl_info = conn.getpeercert()
     # Parse the string from the certificate into a Python datetime object
     return datetime.strptime(ssl_info['notAfter'], r'%b %d %H:%M:%S %Y %Z')
+
+
+def expiration_unixtime(hostname):
+    return int(expiration_datetime(hostname).timestamp())
+
+
+def tuple_domain_unixtime_expiration(hostname):
+    try:
+        return(hostname, expiration_unixtime(hostname))
+    except Exception as e:
+        print('Exception in SSL expiration date checks: ',
+              e, '| hostname: ', hostname)
+        return (hostname, str(e)[0:40] + ' ...')
 
 
 def tuple_domain_days_before_expiration(hostname):
