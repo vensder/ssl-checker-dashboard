@@ -20,5 +20,5 @@ cd -
 ## Run with gunicorn
 
 ```bash
-gunicorn -b 0.0.0.0:8080 app:app
+gunicorn -b 0.0.0.0:8080 -w 4 app:app
 ```
