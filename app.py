@@ -21,52 +21,36 @@ def is_redis_available():
 def get_all_from_redis():
     if is_redis_available():
         for key in r.keys('*'):
-            info = r.get(key).decode('utf-8')
+            info = r.hget(key, 'exp').decode('utf-8')
+            updated = datetime.fromtimestamp(
+                int(r.hget(key, 'updated').decode('utf-8'))).strftime('%Y-%m-%d %H:%M:%S')
             if info.isnumeric() or type(info) is int:
                 info = round((int(info) - datetime.now().timestamp())/86400)
-            domains_days_dict[key.decode('utf-8')] = info
-
-
-def get_info_from_set(domains_set, info_type):
-    """
-    Returns the set of tupples with domain name and days or errors.
-
-    Args:
-        domains_set (set): A set from domain names (str)
-        info_type (str): A type of returning info ("days" or "errors")
-
-    Returns:
-        output_set (set): The set of tupples (domain(str), days(int)) or
-        (domain(str), error(str))
-    """
-    if info_type == "days":
-        return set(((a, b)) for (a, b) in domains_set if type(b) is int)
-    elif info_type == "errors":
-        return set(((a, b)) for (a, b) in domains_set if type(b) is str)
+            domains_days_dict[key.decode('utf-8')] = (info, updated)
 
 
 def get_info_from_dict(domains_dict, info_type):
     """
-    Returns the set of tupples with domain name and days or errors.
+    Returns the dict of domain name and tupples with days or errors and last update time.
 
     Args:
-        domains_set (set): A set from domain names (str)
+        domains_dict (dict): A dict from domain names (str) and tuple (days/errors, last update time)
         info_type (str): A type of returning info ("days" or "errors")
 
     Returns:
-        output_set (set): The set of tupples (domain(str), days(int)) or
-        (domain(str), error(str))
+        my_dict (dict): The dict with tupples {domain(str): (days(int), last update time)}
+        or {domain(str): (error(str), last update time)}
     """
     if info_type == "days":
         my_dict = dict()
         for item in domains_dict:
-            if type(domains_dict[item]) is int:
+            if type(domains_dict[item][0]) is int:
                 my_dict[item] = domains_dict[item]
         return my_dict
     elif info_type == "errors":
         my_dict = dict()
         for item in domains_dict:
-            if type(domains_dict[item]) is str:
+            if type(domains_dict[item][0]) is str:
                 my_dict[item] = domains_dict[item]
         return my_dict
 
@@ -125,6 +109,8 @@ def show_hosts():
         refresh=0)
 
 # TODO: add sorted by days to expire
+
+# TODO: add update outdated from redis
 
 
 # Run bottle internal test server when invoked directly ie: non-uxsgi mode
