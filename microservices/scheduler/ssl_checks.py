@@ -28,7 +28,7 @@ def tuple_domain_unixtime_expiration(hostname):
     except Exception as e:
         print('Exception in SSL expiration date checks: ',
               e, '| hostname: ', hostname)
-        return (hostname, str(e)[0:40] + ' ...')
+        return (hostname, str(e))
 
 
 def tuple_domain_days_before_expiration(hostname):
@@ -39,7 +39,7 @@ def tuple_domain_days_before_expiration(hostname):
     except Exception as e:
         print('Exception in SSL expiration date checks: ',
               e, '| hostname: ', hostname)
-        return (hostname, str(e)[0:40] + ' ...')
+        return (hostname, str(e))
 
 
 def days_before_expiration(hostname):
