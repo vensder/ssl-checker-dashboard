@@ -29,7 +29,7 @@ def get_all_from_redis():
             domains_days_dict[key.decode('utf-8')] = (info, updated)
 
 
-def get_info_from_dict(domains_dict, info_type):
+def get_info_from_dict(domains_dict, info_type='all', truncate_errors=True):
     """
     Returns the dict of domain name and tupples with days or errors and last update time.
 
@@ -41,6 +41,15 @@ def get_info_from_dict(domains_dict, info_type):
         my_dict (dict): The dict with tupples {domain(str): (days(int), last update time)}
         or {domain(str): (error(str), last update time)}
     """
+    if info_type == "all":
+        my_dict = dict()
+        for item in domains_dict:
+            if type(domains_dict[item][0]) is str:
+                my_dict[item] = ((domains_dict[item][0])[
+                                 0:6] + '..', domains_dict[item][1])
+            else:
+                my_dict[item] = domains_dict[item]
+        return my_dict
     if info_type == "days":
         my_dict = dict()
         for item in domains_dict:
@@ -89,8 +98,10 @@ def show_hosts():
         get_all_from_redis()
     return template(
         'domains',
-        domains_days=sort_by_key(domains_days_dict),
-        refresh=0)
+        domains_days=sort_by_key(get_info_from_dict(
+            domains_days_dict, info_type='all', truncate_errors=True)),
+        refresh=0,
+        truncate=True)
 
 
 @route('/errors')
