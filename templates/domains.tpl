@@ -18,8 +18,10 @@
         %end
         %if column == 2:
             %days = domains_days[domain][0]
-            %if not isinstance(days, int) or days < 30:
+            %if not isinstance(days, int):
                 <span class="_{{column}} red">
+            %elif days < 30:
+                <span class="_{{column}} pink">
             %elif days < 60:
                 <span class="_{{column}} yellow">
             %elif days < 90:

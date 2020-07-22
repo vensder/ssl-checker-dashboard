@@ -29,13 +29,14 @@ def get_all_from_redis():
             domains_days_dict[key.decode('utf-8')] = (info, updated)
 
 
-def get_info_from_dict(domains_dict, info_type='all', truncate_errors=True):
+def get_info_from_dict(domains_dict, info_type='all', truncate_errors=0):
     """
     Returns the dict of domain name and tupples with days or errors and last update time.
 
     Args:
         domains_dict (dict): A dict from domain names (str) and tuple (days/errors, last update time)
         info_type (str): A type of returning info ("days" or "errors")
+        truncate_errors(int): do not truncate if 0, truncate to N (positive integer)
 
     Returns:
         my_dict (dict): The dict with tupples {domain(str): (days(int), last update time)}
@@ -44,9 +45,9 @@ def get_info_from_dict(domains_dict, info_type='all', truncate_errors=True):
     if info_type == "all":
         my_dict = dict()
         for item in domains_dict:
-            if type(domains_dict[item][0]) is str:
+            if type(domains_dict[item][0]) is str and truncate_errors:
                 my_dict[item] = ((domains_dict[item][0])[
-                                 0:6] + '..', domains_dict[item][1])
+                                 0:truncate_errors] + '..', domains_dict[item][1])
             else:
                 my_dict[item] = domains_dict[item]
         return my_dict
@@ -60,7 +61,11 @@ def get_info_from_dict(domains_dict, info_type='all', truncate_errors=True):
         my_dict = dict()
         for item in domains_dict:
             if type(domains_dict[item][0]) is str:
-                my_dict[item] = domains_dict[item]
+                if not truncate_errors:
+                    my_dict[item] = domains_dict[item]
+                else:
+                    my_dict[item] = ((domains_dict[item][0])[
+                        0:truncate_errors] + '..', domains_dict[item][1])
         return my_dict
 
 
@@ -91,6 +96,18 @@ def static(path):
 
 @route('/')
 @route('/all')
+def show_all():
+    if not domains_days_dict and is_redis_available():
+        get_all_from_redis()
+    return template(
+        'all-and-errors',
+        domains_good=sort_by_value(get_info_from_dict(
+            domains_dict=domains_days_dict, info_type="days", truncate_errors=8)),
+        domains_bad=sort_by_key(get_info_from_dict(
+            domains_dict=domains_days_dict, info_type="errors", truncate_errors=20)),
+        refresh=0)
+
+
 @route('/hosts')
 @route('/domains')
 def show_hosts():
@@ -99,9 +116,8 @@ def show_hosts():
     return template(
         'domains',
         domains_days=sort_by_key(get_info_from_dict(
-            domains_days_dict, info_type='all', truncate_errors=True)),
-        refresh=0,
-        truncate=True)
+            domains_days_dict, info_type='all', truncate_errors=8)),
+        refresh=0)
 
 
 @route('/errors')
@@ -112,7 +128,7 @@ def show_hosts():
     return template(
         'domains',
         domains_days=sort_by_key(get_info_from_dict(
-            domains_dict=domains_days_dict, info_type="errors")),
+            domains_dict=domains_days_dict, info_type="errors", truncate_errors=0)),
         refresh=0)
 
 
@@ -124,7 +140,7 @@ def show_hosts():
     return template(
         'domains',
         domains_days=sort_by_value(get_info_from_dict(
-            domains_dict=domains_days_dict, info_type="days")),
+            domains_dict=domains_days_dict, info_type="days", truncate_errors=True)),
         refresh=0)
 
 
