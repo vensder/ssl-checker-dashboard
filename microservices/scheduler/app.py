@@ -73,19 +73,22 @@ def decode_redis_value(value):
 
 
 def update_all_domains_in_redis(domains_set):
-    pool = Pool(len(domains_set))
-    for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
-        if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > 28800):
-            r.hset(name=result_tuple[0], mapping={
-                   'exp': result_tuple[1], 'updated': round(time.time())})
+    if is_redis_available():
+        pool = Pool(len(domains_set))
+        for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
+            if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > 28800):
+                r.hset(name=result_tuple[0], mapping={
+                    'exp': result_tuple[1], 'updated': round(time.time())})
+
 
 def update_domains_in_redis():
-    from_redis_set = set()
-    for domain in domains_set:
-        if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > 28800):
-            from_redis_set.add(domain)
-    if (from_redis_set):
-        update_all_domains_in_redis(from_redis_set)
+    if is_redis_available():
+        from_redis_set = set()
+        for domain in domains_set:
+            if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > 28800):
+                from_redis_set.add(domain)
+        if (from_redis_set):
+            update_all_domains_in_redis(from_redis_set)
 
 
 def update_all_missing_domains_in_redis():
@@ -98,10 +101,6 @@ def update_all_missing_domains_in_redis():
         update_all_domains_in_redis(difference)
 
 
-# update_all_missing_domains_in_redis()
-# schedule.every(5).seconds.do(update_all_missing_domains_in_redis)
-
-update_domains_in_redis()
 schedule.every(5).seconds.do(update_domains_in_redis)
 
 while True:
