@@ -45,6 +45,7 @@ jobs:
         #!/usr/bin/env bash
         set -e -x
         cd microservices/scheduler && docker-compose up -d
+        sleep 5
         cd -
         gunicorn -b 0.0.0.0:8080 -w 1 app:app > /dev/null 2>&1 & echo $! > pid.file
         sleep 20
