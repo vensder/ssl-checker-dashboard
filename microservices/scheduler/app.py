@@ -5,55 +5,74 @@ import time
 import ssl_checks as ssl
 import redis
 from multiprocessing.pool import ThreadPool as Pool
+import hashlib
 
 
-try:
-    with open("domains.lst") as f:
-        domains = f.read().splitlines()
-except Exception as e:
-    print("Exception during to open domain list file", str(e))
-    print("Using the default domain list")
-    domains = [
-        "aws.amazon.com",
-        "google.com",
-        "yandex.ru",
-        "google.com",
-        "youtube.com",
-        "linkedin.com",
-        "github.com",
-        "ubuntu.com",
-        "debian.org",
-        "linuxmint.com",
-        "linkedin.com",
-        "microsoft.com",
-        "google.com",
-        "linux.org.ru",
-        "meduza.io",
-        "echo.msk.ru",
-        "example.com",
-        "github.com",
-        "flw.im",
-        "o-nix.com",
-        "kubernetes.io",
-        "cloud.google.com",
-        "python.org",
-        "docs.python.org",
-        "wikipedia.org",
-        "en.wikipedia.org",
-        "bottlepy.org",
-        "hub.docker.com",
-        "docker.com",
-        "pypi.org",
-        "stackoverflow.com",
-        "realpython.com",
-        "medium.com",
-        "linux.org",
-    ]
-
-
-domains_set = set(domains)
+domains_file = "domains.lst"
+domains_set = set()
+default_domains = [
+    "aws.amazon.com",
+    "google.com",
+    "yandex.ru",
+    "google.com",
+    "youtube.com",
+    "linkedin.com",
+    "github.com",
+    "ubuntu.com",
+    "debian.org",
+    "linuxmint.com",
+    "linkedin.com",
+    "microsoft.com",
+    "google.com",
+    "linux.org.ru",
+    "meduza.io",
+    "echo.msk.ru",
+    "example.com",
+    "github.com",
+    "flw.im",
+    "o-nix.com",
+    "kubernetes.io",
+    "cloud.google.com",
+    "python.org",
+    "docs.python.org",
+    "wikipedia.org",
+    "en.wikipedia.org",
+    "bottlepy.org",
+    "hub.docker.com",
+    "docker.com",
+    "pypi.org",
+    "stackoverflow.com",
+    "realpython.com",
+    "medium.com",
+    "linux.org",
+    "notexisting.domain"
+]
 
 r = redis.Redis(host='redis')
+
+
+def domains_file_md5():
+    try:
+        with open(domains_file, 'rb') as f:
+            return hashlib.md5(f.read()).hexdigest()
+    except Exception as e:
+        print("Exception during to open file", str(e))
+        return 0
+
+
+def update_domains_list_from_file():
+    try:
+        with open(domains_file, "r") as f:
+            my_list = []
+            domains = f.read().splitlines()
+            for domain in domains:
+                if str(domain).strip():
+                    my_list.append(domain.strip())
+        return my_list
+    except Exception as e:
+        print("Exception during to open domain list file", str(e))
+        print("Using the default domain list")
+        return default_domains
 
 
 def is_redis_available():
@@ -73,19 +92,22 @@ def decode_redis_value(value):
 
 
 def update_all_domains_in_redis(domains_set):
-    pool = Pool(len(domains_set))
-    for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
-        if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > 28800):
-            r.hset(name=result_tuple[0], mapping={
-                   'exp': result_tuple[1], 'updated': round(time.time())})
+    if is_redis_available():
+        pool = Pool(len(domains_set))
+        for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
+            if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > 28800):
+                r.hset(name=result_tuple[0], mapping={
+                    'exp': result_tuple[1], 'updated': round(time.time())})
 
-def update_domains_in_redis():
-    from_redis_set = set()
-    for domain in domains_set:
-        if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > 28800):
-            from_redis_set.add(domain)
-    if (from_redis_set):
-        update_all_domains_in_redis(from_redis_set)
+
+def update_outdated_info_in_redis():
+    if is_redis_available():
+        from_redis_set = set()
+        for domain in domains_set:
+            if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > 28800):
+                from_redis_set.add(domain)
+        if (from_redis_set):
+            update_all_domains_in_redis(from_redis_set)
 
 
 def update_all_missing_domains_in_redis():
@@ -98,15 +120,31 @@ def update_all_missing_domains_in_redis():
         update_all_domains_in_redis(difference)
 
 
-# update_all_missing_domains_in_redis()
-# schedule.every(5).seconds.do(update_all_missing_domains_in_redis)
+def update_domains_if_md5_changed():
+    global md5_hash
+    global domains_set
+    md5_new = domains_file_md5()
+    if md5_hash != md5_new:
+        print("updating domains from file")
+        domains_set = set(update_domains_list_from_file())
+        update_all_missing_domains_in_redis()
+        md5_hash = md5_new
 
-update_domains_in_redis()
-schedule.every(5).seconds.do(update_domains_in_redis)
+
+md5_hash = domains_file_md5()
+
+domains_set = set(update_domains_list_from_file())
+
+
+schedule.every(1).seconds.do(update_domains_if_md5_changed)
+schedule.every(5).seconds.do(update_outdated_info_in_redis)
 
 while True:
     schedule.run_pending()
     time.sleep(1)
+
+
+# TODO: check if the element is empty string in the domain list and remove it
 
 # TODO: add TTL or datetime of the last update
 

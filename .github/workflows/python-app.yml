@@ -47,7 +47,7 @@ jobs:
         cd microservices/scheduler && docker-compose up -d
         cd -
         python app.py > /dev/null 2>&1 & echo $! > pid.file
-        sleep 10
+        sleep 15
         curl -s localhost:8080 | grep 'google.com'
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
