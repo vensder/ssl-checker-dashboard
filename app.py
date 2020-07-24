@@ -3,6 +3,7 @@
 from bottle import route, run, hook, request, default_app, TEMPLATE_PATH, template, static_file
 from datetime import datetime
 import redis
+from apscheduler.schedulers.background import BackgroundScheduler
 
 domains_days_dict = dict()
 
@@ -146,6 +147,10 @@ def show_hosts():
 
 # TODO: add update outdated from redis
 
+scheduler = BackgroundScheduler()
+# TODO: make update only if not info or outdated
+job = scheduler.add_job(get_all_from_redis, 'interval', seconds=10)
+scheduler.start()
 
 # Run bottle internal test server when invoked directly ie: non-uxsgi mode
 if __name__ == '__main__':
