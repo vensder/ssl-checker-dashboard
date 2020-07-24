@@ -48,7 +48,7 @@ jobs:
         sleep 5
         cd -
         gunicorn -b 0.0.0.0:8080 -w 1 app:app > /dev/null 2>&1 & echo $! > pid.file
-        sleep 20
+        sleep 10
         curl -s localhost:8080 | grep 'google.com'
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
