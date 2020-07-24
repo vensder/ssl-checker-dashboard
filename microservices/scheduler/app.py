@@ -62,8 +62,8 @@ def domains_file_md5():
 
 def update_domains_list_from_file():
     try:
-        my_list = []
         with open(domains_file, "r") as f:
+            my_list = []
             domains = f.read().splitlines()
             for domain in domains:
                 if str(domain).strip():
