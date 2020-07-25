@@ -11,16 +11,15 @@ The dashboard allows you to overview the expiration days for the SSL certificate
 ## How to run locally
 
 ```bash
-virtualenv -p python3 env
-source env/bin/activate
-pip install -r requirements.txt
-cd microservices/scheduler && docker-compose up -d
-cd -
-./app.py
+docker-compose build
+docker-compose up -d cron redis
+sleep 10
+docker-compose up -d web-app
+docker-compose ps
 ```
 
-## Run with gunicorn
+## Load test
 
 ```bash
-gunicorn -b 0.0.0.0:8080 -w 4 app:app
+ab -c 100 -n 10000 http://127.0.0.1:8080/all
 ```
