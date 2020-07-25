@@ -4,7 +4,6 @@ from bottle import route, run, hook, request, default_app, TEMPLATE_PATH, templa
 from datetime import datetime
 import redis
 from apscheduler.schedulers.background import BackgroundScheduler
-import time
 
 domains_days_dict = dict()
 
