@@ -95,7 +95,7 @@ def update_all_domains_in_redis(domains_set):
     if is_redis_available():
         pool = Pool(len(domains_set))
         for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
-            if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > 28800):
+            if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > 60*60*2):
                 r.hset(name=result_tuple[0], mapping={
                     'exp': result_tuple[1], 'updated': round(time.time())})
 
@@ -104,7 +104,7 @@ def update_outdated_info_in_redis():
     if is_redis_available():
         from_redis_set = set()
         for domain in domains_set:
-            if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > 28800):
+            if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > 60*60*2):
                 from_redis_set.add(domain)
         if (from_redis_set):
             update_all_domains_in_redis(from_redis_set)

@@ -45,9 +45,10 @@ jobs:
         #!/usr/bin/env bash
         set -e -x
         cd microservices/scheduler && docker-compose up -d
+        sleep 5
         cd -
-        python app.py > /dev/null 2>&1 & echo $! > pid.file
-        sleep 15
+        gunicorn -b 0.0.0.0:8080 -w 1 app:app > /dev/null 2>&1 & echo $! > pid.file
+        sleep 10
         curl -s localhost:8080 | grep 'google.com'
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'

@@ -11,7 +11,7 @@ def expiration_datetime(hostname):
         socket.socket(socket.AF_INET),
         server_hostname=hostname,
     )
-    conn.settimeout(10.0)
+    conn.settimeout(3.0)
     conn.connect((hostname, 443))
     ssl_info = conn.getpeercert()
     # Parse the string from the certificate into a Python datetime object
