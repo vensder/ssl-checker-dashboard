@@ -44,15 +44,13 @@ jobs:
       run: |
         #!/usr/bin/env bash
         set -e -x
-        cd microservices/scheduler && docker-compose up -d
-        sleep 5
-        cd -
-        gunicorn -b 0.0.0.0:8080 -w 1 app:app > /dev/null 2>&1 & echo $! > pid.file
-        sleep 10
+        docker-compose build
+        docker-compose up -d cron redis
+        sleep 15
+        docker-compose up -d web-app
+        docker-compose ps
         curl -s localhost:8080 | grep 'google.com'
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
         curl -s localhost:8080/errors | grep 'notexisting.domain'
-        kill $(cat pid.file)
-        cd microservices/scheduler && docker-compose stop
 

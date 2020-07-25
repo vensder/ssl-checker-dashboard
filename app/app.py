@@ -4,11 +4,16 @@ from bottle import route, run, hook, request, default_app, TEMPLATE_PATH, templa
 from datetime import datetime
 import redis
 from apscheduler.schedulers.background import BackgroundScheduler
+from os import environ
+
+redis_host = 'redis'
+
+if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
+    redis_host = environ['REDIS_HOST']
 
 domains_days_dict = dict()
 
-r = redis.Redis()
-
+r = redis.Redis(host=redis_host)
 
 def is_redis_available():
     try:
