@@ -4,6 +4,7 @@ from bottle import route, run, hook, request, default_app, TEMPLATE_PATH, templa
 from datetime import datetime
 import redis
 from apscheduler.schedulers.background import BackgroundScheduler
+import time
 
 domains_days_dict = dict()
 
@@ -19,15 +20,31 @@ def is_redis_available():
     return True
 
 
+def get_domain_info_from_redis(domain):
+    if is_redis_available():
+        if (info := r.hget(domain, 'exp')):
+            info = info.decode('utf-8')
+            updated = datetime.fromtimestamp(
+                int(r.hget(domain, 'updated').decode('utf-8'))).strftime('%Y-%m-%d %H:%M:%S')
+            if info.isnumeric() or type(info) is int:
+                info = round((int(info) - datetime.now().timestamp())/86400)
+            domains_days_dict[domain] = (info, updated)
+
+
 def get_all_from_redis():
     if is_redis_available():
         for key in r.keys('*'):
-            info = r.hget(key, 'exp').decode('utf-8')
-            updated = datetime.fromtimestamp(
-                int(r.hget(key, 'updated').decode('utf-8'))).strftime('%Y-%m-%d %H:%M:%S')
-            if info.isnumeric() or type(info) is int:
-                info = round((int(info) - datetime.now().timestamp())/86400)
-            domains_days_dict[key.decode('utf-8')] = (info, updated)
+            get_domain_info_from_redis(key)
+
+
+def update_outdated_from_redis():
+    if is_redis_available():
+        for domain in domains_days_dict:
+            updated = datetime.strptime(
+                domains_days_dict[domain][1], '%Y-%m-%d %H:%M:%S')
+            diff = datetime.now() - updated
+            if diff.days * 60*60*24 + diff.seconds > 60*60*2:
+                get_domain_info_from_redis(domain)
 
 
 def get_info_from_dict(domains_dict, info_type='all', truncate_errors=0):
@@ -149,7 +166,7 @@ def show_hosts():
 
 scheduler = BackgroundScheduler()
 # TODO: make update only if not info or outdated
-job = scheduler.add_job(get_all_from_redis, 'interval', seconds=10)
+job = scheduler.add_job(update_outdated_from_redis, 'interval', seconds=10)
 scheduler.start()
 
 # Run bottle internal test server when invoked directly ie: non-uxsgi mode
