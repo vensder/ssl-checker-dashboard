@@ -18,7 +18,9 @@ docker-compose up -d web-app
 docker-compose ps
 ```
 
-## Load test
+Open the link in a browser: <http://localhost:8080/>
+
+## Run load test
 
 ```bash
 ab -c 100 -n 10000 http://127.0.0.1:8080/all
