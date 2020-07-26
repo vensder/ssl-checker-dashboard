@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:6.0.5-alpine
+    ports:
+      - "6379:6379"
+
+  cron:
+    image: vensder/ssl-checker-cron
+    depends_on:
+      - redis
+
+  web-app:
+    image: vensder/ssl-checker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - cron
+    environment:
+      - REDIS_HOST=redis
+    command:
+      [
+        "--worker-tmp-dir /dev/shm",
+        "--log-file=-",
+        "--workers=2",
+        "-b 0.0.0.0:8080",
+      ]
+    # command:
+    #   [
+    #     "--worker-tmp-dir /dev/shm",
+    #     "--log-file=-",
+    #     "--workers=2",
+    #     "--threads=4",
+    #     "--worker-class=gthread",
+    #     "-b 0.0.0.0:8080",
+    #   ]
