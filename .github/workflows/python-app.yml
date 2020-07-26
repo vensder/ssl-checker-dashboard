@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - 'README.*'
       - 'img/**'
+      - 'k8s/**'
     branches:
       - master
     tags:
@@ -17,6 +18,7 @@ on:
     paths-ignore:
       - 'README.*'
       - 'img/**'
+      - 'k8s/**'
     branches:
       - master
 

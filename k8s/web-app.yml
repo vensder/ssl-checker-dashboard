@@ -1,0 +1,110 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  labels:
+    app: web-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+        - name: web-app
+          image: vensder/ssl-checker:0.0.1
+          ports:
+            - containerPort: 8080
+              name: web-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: web-app
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: web-app
+spec:
+  rules:
+    - host: ssl-checks.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: web-app
+              servicePort: 8080
+---
+# redis
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+  name: redis
+spec:
+  clusterIP: None
+  ports:
+    - name: redis-service
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:6.0.5-alpine
+          ports:
+            - containerPort: 6379
+              name: redis
+---
+# cron
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cron
+  labels:
+    app: cron
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cron
+  template:
+    metadata:
+      labels:
+        app: cron
+    spec:
+      containers:
+        - name: cron
+          image: vensder/ssl-checker-cron:0.0.1
