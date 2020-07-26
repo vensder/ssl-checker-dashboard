@@ -8,12 +8,18 @@ on:
     paths-ignore:
       - 'README.*'
       - 'img/**'
-    branches: [ master ]
+    branches:
+      - master
+    tags:
+      - v*
+
   pull_request:
     paths-ignore:
       - 'README.*'
       - 'img/**'
-    branches: [ master ]
+    branches:
+      - master
+
 
 jobs:
   build:
@@ -61,7 +67,7 @@ jobs:
         docker-compose stop
 
     - name: Build app image
-      run: docker build app/ --file cron/Dockerfile --tag ssl-checker
+      run: docker build app/ --file app/Dockerfile --tag ssl-checker
 
     - name: Build cron image
       run: docker build cron/ --file cron/Dockerfile --tag ssl-checker-cron
