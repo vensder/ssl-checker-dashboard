@@ -15,6 +15,7 @@ domains_days_dict = dict()
 
 r = redis.Redis(host=redis_host)
 
+
 def is_redis_available():
     try:
         r.ping()
@@ -38,7 +39,27 @@ def get_domain_info_from_redis(domain):
 def get_all_from_redis():
     if is_redis_available():
         for key in r.keys('*'):
-            get_domain_info_from_redis(key)
+            get_domain_info_from_redis(key.decode('utf-8'))
+
+
+def get_keys_from_redis():
+    domains_in_redis = set()
+    if is_redis_available():
+        for key in r.keys('*'):
+            domains_in_redis.add(key.decode('utf-8'))
+    return domains_in_redis
+
+
+def get_domains_from_dict():
+    domains_in_dict = set()
+    for domain in domains_days_dict:
+        domains_in_dict.add(domain)
+    return domains_in_dict
+
+
+def update_absent_from_redis():
+    for domain in (get_keys_from_redis() - get_domains_from_dict()):
+        get_domain_info_from_redis(domain)
 
 
 def update_outdated_from_redis():
@@ -170,7 +191,8 @@ def show_hosts():
 
 scheduler = BackgroundScheduler()
 # TODO: make update only if not info or outdated
-job = scheduler.add_job(update_outdated_from_redis, 'interval', seconds=10)
+job1 = scheduler.add_job(update_outdated_from_redis, 'interval', seconds=3600)
+job2 = scheduler.add_job(update_absent_from_redis, 'interval', seconds=20)
 scheduler.start()
 
 # Run bottle internal test server when invoked directly ie: non-uxsgi mode
