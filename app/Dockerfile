@@ -13,7 +13,7 @@ RUN addgroup -S ${GROUP} \
 USER ${USER}
 WORKDIR /home/${USER}
 
-COPY . /home/${USER}/
+COPY --chown=${USER} . /home/${USER}/
 
 RUN pip install -r requirements.txt --user
 
