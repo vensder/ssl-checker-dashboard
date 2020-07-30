@@ -1,12 +1,19 @@
 FROM python:3.8.4-alpine3.12
 
-RUN addgroup -S app && adduser -S app -G app
+ARG USER="app"
+ARG GROUP="app"
 
-WORKDIR /app
+ENV PATH="/home/${USER}/.local/bin:${PATH}"
+ENV TZ="UTC"
+ENV PYTHONUNBUFFERED=1
 
-USER app
+RUN addgroup -S ${GROUP} \
+    && adduser -S ${USER} -G ${GROUP}
 
-COPY app.py ssl_checks.py requirements.txt domains.lst /app/
+USER ${USER}
+WORKDIR /home/${USER}
+
+COPY --chown=${USER} app.py ssl_checks.py requirements.txt domains.lst /home/${USER}/
 
 RUN pip install -r requirements.txt
 
