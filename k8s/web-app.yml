@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web-app
-          image: vensder/ssl-checker:0.0.2
+          image: vensder/ssl-checker:0.0.4
           ports:
             - containerPort: 8080
               name: web-app
@@ -107,4 +107,4 @@ spec:
     spec:
       containers:
         - name: cron
-          image: vensder/ssl-checker-cron:0.0.2
+          image: vensder/ssl-checker-cron:0.0.4
