@@ -6,7 +6,12 @@ import ssl_checks as ssl
 import redis
 from multiprocessing.pool import ThreadPool as Pool
 import hashlib
+from os import environ
 
+redis_host = 'redis'
+
+if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
+    redis_host = environ['REDIS_HOST']
 
 domains_file = "domains.lst"
 domains_set = set()
@@ -48,7 +53,7 @@ default_domains = [
     "notexisting.domain"
 ]
 
-r = redis.Redis(host='redis')
+r = redis.Redis(host=redis_host)
 
 
 def domains_file_md5():
