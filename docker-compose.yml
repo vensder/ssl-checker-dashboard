@@ -11,6 +11,8 @@ services:
       context: ./cron
     depends_on:
       - redis
+    environment:
+      - REDIS_HOST=redis
 
   web-app:
     build:

@@ -18,9 +18,27 @@ spec:
       containers:
         - name: web-app
           image: vensder/ssl-checker:0.0.4
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "600m"
+            limits:
+              memory: "128Mi"
+              cpu: "800m"
           ports:
             - containerPort: 8080
               name: web-app
+          command: ["gunicorn", "app:app"]
+          args:
+            [
+              "--worker-tmp-dir /dev/shm",
+              "--log-file=-",
+              "--workers=1",
+              "-b 0.0.0.0:8080",
+            ]
+          env:
+            - name: REDIS_HOST
+              value: "redis"
 ---
 apiVersion: v1
 kind: Service
@@ -108,3 +126,6 @@ spec:
       containers:
         - name: cron
           image: vensder/ssl-checker-cron:0.0.4
+          env:
+            - name: REDIS_HOST
+              value: "redis"
