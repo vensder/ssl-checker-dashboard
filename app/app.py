@@ -4,12 +4,14 @@ from bottle import route, run, hook, request, default_app, TEMPLATE_PATH, templa
 from datetime import datetime
 import redis
 from apscheduler.schedulers.background import BackgroundScheduler
-from os import environ
+from os import environ, uname
 
 redis_host = 'redis'
 
 if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
     redis_host = environ['REDIS_HOST']
+
+hostname = uname().nodename
 
 domains_days_dict = dict()
 
@@ -148,7 +150,8 @@ def show_all():
             domains_dict=domains_days_dict, info_type="days", truncate_errors=8)),
         domains_bad=sort_by_key(get_info_from_dict(
             domains_dict=domains_days_dict, info_type="errors", truncate_errors=20)),
-        refresh=0)
+        refresh=0,
+        hostname=hostname)
 
 
 @route('/hosts')
@@ -160,7 +163,8 @@ def show_hosts():
         'domains',
         domains_days=sort_by_key(get_info_from_dict(
             domains_days_dict, info_type='all', truncate_errors=8)),
-        refresh=0)
+        refresh=0,
+        hostname=hostname)
 
 
 @route('/errors')
@@ -172,7 +176,8 @@ def show_hosts():
         'domains',
         domains_days=sort_by_key(get_info_from_dict(
             domains_dict=domains_days_dict, info_type="errors", truncate_errors=0)),
-        refresh=0)
+        refresh=0,
+        hostname=hostname)
 
 
 @route('/days')
@@ -184,7 +189,8 @@ def show_hosts():
         'domains',
         domains_days=sort_by_value(get_info_from_dict(
             domains_dict=domains_days_dict, info_type="days", truncate_errors=True)),
-        refresh=0)
+        refresh=0,
+        hostname=hostname)
 
 
 # TODO: add update outdated from redis

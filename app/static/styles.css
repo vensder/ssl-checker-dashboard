@@ -3,6 +3,12 @@
     font-family: Arial;
 }
 
+header {
+    font-size: 75%;
+    font-family: monospace;
+    color: grey;
+}
+
 caption {
     font-size: 120%;
     font-family: Arial;    

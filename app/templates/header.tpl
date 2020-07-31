@@ -25,4 +25,5 @@
 
 <body>
     <header>
+    Running on: {{ hostname }}
     </header>
