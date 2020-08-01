@@ -8,7 +8,8 @@ ENV TZ="UTC"
 ENV PYTHONUNBUFFERED=1
 
 RUN addgroup -S ${GROUP} \
-    && adduser -S ${USER} -G ${GROUP}
+    && adduser -S ${USER} -G ${GROUP} \
+    && apk add --no-cache tzdata
 
 USER ${USER}
 WORKDIR /home/${USER}
