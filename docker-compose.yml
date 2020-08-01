@@ -24,6 +24,7 @@ services:
       - cron
     environment:
       - REDIS_HOST=redis
+      - TZ=Pacific/Auckland
     command:
       [
         "--worker-tmp-dir /dev/shm",

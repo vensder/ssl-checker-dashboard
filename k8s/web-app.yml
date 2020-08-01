@@ -39,6 +39,8 @@ spec:
           env:
             - name: REDIS_HOST
               value: "redis"
+            - name: TZ
+              value: "Pacific/Auckland"
 ---
 apiVersion: v1
 kind: Service
