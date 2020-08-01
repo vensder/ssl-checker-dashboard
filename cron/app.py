@@ -9,9 +9,21 @@ import hashlib
 from os import environ
 
 redis_host = 'redis'
-
 if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
     redis_host = environ['REDIS_HOST']
+
+seconds_between_info_updates = 60*60*2
+if 'SECONDS_BETWEEN_INFO_UPDATES' in environ and (environ['SECONDS_BETWEEN_INFO_UPDATES']).isnumeric():
+    seconds_between_info_updates = int(environ['SECONDS_BETWEEN_INFO_UPDATES'])
+
+seconds_between_checks_for_outdating = 60*10
+if 'SECONDS_BETWEEN_CHECKS_FOR_OUTDATING' in environ and (environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']).isnumeric():
+    seconds_between_checks_for_outdating = int(
+        environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING'])
+
+seconds_between_file_checks = 10
+if 'SECONDS_BETWEEN_FILE_CHECKS' in environ and (environ['SECONDS_BETWEEN_FILE_CHECKS']).isnumeric():
+    seconds_between_file_checks = int(environ['SECONDS_BETWEEN_FILE_CHECKS'])
 
 domains_file = "domains.lst"
 domains_set = set()
@@ -100,7 +112,7 @@ def update_all_domains_in_redis(domains_set):
     if is_redis_available():
         pool = Pool(len(domains_set))
         for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
-            if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > 60*60*2):
+            if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > seconds_between_info_updates):
                 r.hset(name=result_tuple[0], mapping={
                     'exp': result_tuple[1], 'updated': round(time.time())})
 
@@ -109,7 +121,7 @@ def update_outdated_info_in_redis():
     if is_redis_available():
         from_redis_set = set()
         for domain in domains_set:
-            if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > 60*60*2):
+            if (not r.hget(domain, 'exp')) or (round(time.time()) - decode_redis_value(r.hget(domain, 'updated')) > seconds_between_info_updates):
                 from_redis_set.add(domain)
         if (from_redis_set):
             update_all_domains_in_redis(from_redis_set)
@@ -139,18 +151,13 @@ def update_domains_if_md5_changed():
 md5_hash = domains_file_md5()
 
 domains_set = set(update_domains_list_from_file())
+update_all_domains_in_redis(domains_set)
 
-
-schedule.every(1).seconds.do(update_domains_if_md5_changed)
-schedule.every(5).seconds.do(update_outdated_info_in_redis)
+schedule.every(seconds_between_file_checks).seconds.do(
+    update_domains_if_md5_changed)
+schedule.every(seconds_between_checks_for_outdating).seconds.do(
+    update_outdated_info_in_redis)
 
 while True:
     schedule.run_pending()
     time.sleep(1)
-
-
-# TODO: check if the element is empty string in the domain list and remove it
-
-# TODO: add TTL or datetime of the last update
-
-# TODO: add env var for update every N (h, min, sec)

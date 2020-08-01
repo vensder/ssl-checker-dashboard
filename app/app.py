@@ -11,6 +11,20 @@ redis_host = 'redis'
 if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
     redis_host = environ['REDIS_HOST']
 
+seconds_between_info_updates = 60*60*2
+if 'SECONDS_BETWEEN_INFO_UPDATES' in environ and (environ['SECONDS_BETWEEN_INFO_UPDATES']).isnumeric():
+    seconds_between_info_updates = int(environ['SECONDS_BETWEEN_INFO_UPDATES'])
+
+seconds_between_checks_for_outdating = 60*10
+if 'SECONDS_BETWEEN_CHECKS_FOR_OUTDATING' in environ and (environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']).isnumeric():
+    seconds_between_checks_for_outdating = int(
+        environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING'])
+
+seconds_between_update_absent = 20
+if 'SECONDS_BETWEEN_UPDATE_ABSENT' in environ and (environ['SECONDS_BETWEEN_UPDATE_ABSENT']).isnumeric():
+    seconds_between_update_absent = int(
+        environ['SECONDS_BETWEEN_UPDATE_ABSENT'])
+
 hostname = uname().nodename
 
 domains_days_dict = dict()
@@ -70,7 +84,7 @@ def update_outdated_from_redis():
             updated = datetime.strptime(
                 domains_days_dict[domain][1], '%Y-%m-%d %H:%M:%S')
             diff = datetime.now() - updated
-            if diff.days * 60*60*24 + diff.seconds > 60*60*2:
+            if diff.days * 60*60*24 + diff.seconds > seconds_between_info_updates:
                 get_domain_info_from_redis(domain)
 
 
@@ -197,8 +211,10 @@ def show_hosts():
 
 scheduler = BackgroundScheduler()
 # TODO: make update only if not info or outdated
-job1 = scheduler.add_job(update_outdated_from_redis, 'interval', seconds=3600)
-job2 = scheduler.add_job(update_absent_from_redis, 'interval', seconds=20)
+job1 = scheduler.add_job(update_outdated_from_redis,
+                         'interval', seconds=seconds_between_checks_for_outdating)
+job2 = scheduler.add_job(update_absent_from_redis,
+                         'interval', seconds=seconds_between_update_absent)
 scheduler.start()
 
 # Run bottle internal test server when invoked directly ie: non-uxsgi mode
