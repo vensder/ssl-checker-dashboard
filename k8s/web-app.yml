@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web-app
-          image: vensder/ssl-checker:0.0.7
+          image: vensder/ssl-checker:0.0.8
           resources:
             requests:
               memory: "64Mi"
@@ -41,6 +41,12 @@ spec:
               value: "redis"
             - name: TZ
               value: "Pacific/Auckland"
+            - name: SECONDS_BETWEEN_INFO_UPDATES
+              value: "7200"
+            - name: SECONDS_BETWEEN_CHECKS_FOR_OUTDATING
+              value: "600"
+            - name: SECONDS_BETWEEN_UPDATE_ABSENT
+              value: "10"
 ---
 apiVersion: v1
 kind: Service
@@ -127,7 +133,13 @@ spec:
     spec:
       containers:
         - name: cron
-          image: vensder/ssl-checker-cron:0.0.7
+          image: vensder/ssl-checker-cron:0.0.8
           env:
             - name: REDIS_HOST
               value: "redis"
+            - name: SECONDS_BETWEEN_INFO_UPDATES
+              value: "7200"
+            - name: SECONDS_BETWEEN_CHECKS_FOR_OUTDATING
+              value: "600"
+            - name: SECONDS_BETWEEN_FILE_CHECKS
+              value: "30"
