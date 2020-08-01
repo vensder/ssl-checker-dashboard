@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web-app
-          image: vensder/ssl-checker:latest
+          image: vensder/ssl-checker:0.0.7
           resources:
             requests:
               memory: "64Mi"
@@ -127,7 +127,7 @@ spec:
     spec:
       containers:
         - name: cron
-          image: vensder/ssl-checker-cron:latest
+          image: vensder/ssl-checker-cron:0.0.7
           env:
             - name: REDIS_HOST
               value: "redis"
