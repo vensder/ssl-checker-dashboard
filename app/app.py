@@ -12,16 +12,18 @@ if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
     redis_host = environ['REDIS_HOST']
 
 seconds_between_info_updates = 60*60*2
-if 'SECONDS_BETWEEN_INFO_UPDATES' in environ and environ['SECONDS_BETWEEN_INFO_UPDATES']:
-    seconds_between_info_updates = environ['SECONDS_BETWEEN_INFO_UPDATES']
+if 'SECONDS_BETWEEN_INFO_UPDATES' in environ and (environ['SECONDS_BETWEEN_INFO_UPDATES']).isnumeric():
+    seconds_between_info_updates = int(environ['SECONDS_BETWEEN_INFO_UPDATES'])
 
 seconds_between_checks_for_outdating = 60*10
-if 'SECONDS_BETWEEN_CHECKS_FOR_OUTDATING' in environ and environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']:
-    seconds_between_checks_for_outdating = environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']
+if 'SECONDS_BETWEEN_CHECKS_FOR_OUTDATING' in environ and (environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']).isnumeric():
+    seconds_between_checks_for_outdating = int(
+        environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING'])
 
 seconds_between_update_absent = 20
-if 'SECONDS_BETWEEN_UPDATE_ABSENT' in environ and environ['SECONDS_BETWEEN_UPDATE_ABSENT']:
-    seconds_between_update_absent = environ['SECONDS_BETWEEN_UPDATE_ABSENT']
+if 'SECONDS_BETWEEN_UPDATE_ABSENT' in environ and (environ['SECONDS_BETWEEN_UPDATE_ABSENT']).isnumeric():
+    seconds_between_update_absent = int(
+        environ['SECONDS_BETWEEN_UPDATE_ABSENT'])
 
 hostname = uname().nodename
 

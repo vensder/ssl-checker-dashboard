@@ -13,17 +13,17 @@ if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
     redis_host = environ['REDIS_HOST']
 
 seconds_between_info_updates = 60*60*2
-if 'SECONDS_BETWEEN_INFO_UPDATES' in environ and environ['SECONDS_BETWEEN_INFO_UPDATES']:
-    seconds_between_info_updates = environ['SECONDS_BETWEEN_INFO_UPDATES']
-
-seconds_between_file_checks = 10
-if 'SECONDS_BETWEEN_FILE_CHECKS' in environ and environ['SECONDS_BETWEEN_FILE_CHECKS']:
-    seconds_between_file_checks = environ['SECONDS_BETWEEN_FILE_CHECKS']
+if 'SECONDS_BETWEEN_INFO_UPDATES' in environ and (environ['SECONDS_BETWEEN_INFO_UPDATES']).isnumeric():
+    seconds_between_info_updates = int(environ['SECONDS_BETWEEN_INFO_UPDATES'])
 
 seconds_between_checks_for_outdating = 60*10
-if 'SECONDS_BETWEEN_CHECKS_FOR_OUTDATING' in environ and environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']:
-    seconds_between_checks_for_outdating = environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']
+if 'SECONDS_BETWEEN_CHECKS_FOR_OUTDATING' in environ and (environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING']).isnumeric():
+    seconds_between_checks_for_outdating = int(
+        environ['SECONDS_BETWEEN_CHECKS_FOR_OUTDATING'])
 
+seconds_between_file_checks = 10
+if 'SECONDS_BETWEEN_FILE_CHECKS' in environ and (environ['SECONDS_BETWEEN_FILE_CHECKS']).isnumeric():
+    seconds_between_file_checks = int(environ['SECONDS_BETWEEN_FILE_CHECKS'])
 
 domains_file = "domains.lst"
 domains_set = set()
