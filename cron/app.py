@@ -151,7 +151,11 @@ def update_domains_if_md5_changed():
 md5_hash = domains_file_md5()
 
 domains_set = set(update_domains_list_from_file())
-update_all_domains_in_redis(domains_set)
+
+while not is_redis_available():
+    print("trying to update info in redis during the startup...")
+    time.sleep(2)
+    update_all_domains_in_redis(domains_set)
 
 schedule.every(seconds_between_file_checks).seconds.do(
     update_domains_if_md5_changed)
