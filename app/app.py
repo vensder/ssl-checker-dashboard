@@ -1,10 +1,12 @@
 #!/usr/bin/env python3.8
 
-from bottle import route, run, hook, request, default_app, TEMPLATE_PATH, template, static_file
+from bottle import route, run, hook, request, default_app, HTTPResponse
+from bottle import TEMPLATE_PATH, template, static_file
 from datetime import datetime
 import redis
 from apscheduler.schedulers.background import BackgroundScheduler
 from os import environ, uname
+import json
 
 redis_host = 'redis'
 
@@ -151,6 +153,12 @@ def strip_path():
 @route('/static/:path#.+#', name='static')  # for static files like css
 def static(path):
     return static_file(path, root='static')
+
+
+@route('/health')
+def health_check():
+    theBody = json.dumps({'health': 'ok'})
+    return HTTPResponse(status=300, body=theBody)
 
 
 @route('/')
