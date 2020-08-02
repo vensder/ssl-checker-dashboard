@@ -62,6 +62,7 @@ jobs:
         sleep 15
         docker-compose up -d web-app
         docker-compose ps
+        curl -s -o /dev/null -w "%{http_code}" localhost:8080/health | grep 200
         curl -s localhost:8080 | grep 'google.com'
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
