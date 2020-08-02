@@ -158,7 +158,8 @@ def static(path):
 @route('/health')
 def health_check():
     theBody = json.dumps({'health': 'ok'})
-    return HTTPResponse(status=300, body=theBody)
+    headers = {'Content-type': 'application/json'}
+    return HTTPResponse(status=200, body=theBody, headers=headers)
 
 
 @route('/')
