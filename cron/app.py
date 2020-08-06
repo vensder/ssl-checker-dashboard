@@ -8,7 +8,6 @@ from multiprocessing.pool import ThreadPool as Pool
 import hashlib
 from os import environ
 from distutils.util import strtobool
-from math import ceil
 
 redis_host = 'redis'
 if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
