@@ -57,6 +57,13 @@ jobs:
       run: |
         #!/usr/bin/env bash
         set -e -x
+        echo '
+
+        google.com
+        ya.ru
+        notexisting.domain
+
+        ' > cron/domains.lst
         docker-compose build
         docker-compose up -d cron redis
         sleep 15
