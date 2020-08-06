@@ -116,7 +116,10 @@ def decode_redis_value(value):
 
 def update_all_domains_in_redis(domains_set):
     if is_redis_available():
-        domains_chunk_size = int(len(domains_set)/10)
+        if len(domains_set) > 50:
+            domains_chunk_size = int(len(domains_set)/10)
+        else:
+            domains_chunk_size = len(domains_set)
         begin = 0
         while begin < len(domains_set):
             sub_set = set(list(domains_set)[begin:begin+domains_chunk_size])
