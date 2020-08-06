@@ -58,7 +58,7 @@ jobs:
         #!/usr/bin/env bash
         docker-compose stop -t 0
         docker-compose rm -f
-        
+
         set -e -x
         echo '
 
@@ -70,6 +70,7 @@ jobs:
         docker-compose build
         docker-compose up -d cron redis
         sleep 10
+        docker-compose exec redis redis-cli  --scan
         docker-compose up -d web-app
         sleep 5
         docker-compose ps
