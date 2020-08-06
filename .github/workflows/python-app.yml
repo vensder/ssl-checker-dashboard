@@ -56,6 +56,9 @@ jobs:
     - name: Integration test
       run: |
         #!/usr/bin/env bash
+        docker-compose stop -t 0
+        docker-compose rm -f
+        
         set -e -x
         echo '
 
@@ -76,7 +79,8 @@ jobs:
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
         curl -s localhost:8080/errors | grep 'notexisting.domain'
-        docker-compose stop
+        docker-compose stop -t 0
+        docker-compose rm -f
 
     - name: Build app image
       run: docker build app/ --file app/Dockerfile --tag ssl-checker
