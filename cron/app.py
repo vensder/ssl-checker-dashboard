@@ -7,6 +7,7 @@ import redis
 from multiprocessing.pool import ThreadPool as Pool
 import hashlib
 from os import environ
+from distutils.util import strtobool    
 
 redis_host = 'redis'
 if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
@@ -24,6 +25,10 @@ if 'SECONDS_BETWEEN_CHECKS_FOR_OUTDATING' in environ and (environ['SECONDS_BETWE
 seconds_between_file_checks = 10
 if 'SECONDS_BETWEEN_FILE_CHECKS' in environ and (environ['SECONDS_BETWEEN_FILE_CHECKS']).isnumeric():
     seconds_between_file_checks = int(environ['SECONDS_BETWEEN_FILE_CHECKS'])
+
+is_hash_sum_check_enabled = False
+if 'IS_HASH_SUM_CHECK_ENABLED' in environ:
+    is_hash_sum_check_enabled = strtobool(environ['IS_HASH_SUM_CHECK_ENABLED'])
 
 domains_file = "domains.lst"
 domains_set = set()
@@ -148,7 +153,8 @@ def update_domains_if_md5_changed():
         md5_hash = md5_new
 
 
-md5_hash = domains_file_md5()
+if is_hash_sum_check_enabled:
+    md5_hash = domains_file_md5()
 
 domains_set = set(update_domains_list_from_file())
 
@@ -158,8 +164,10 @@ while not is_redis_available():
 
 update_all_domains_in_redis(domains_set)
 
-schedule.every(seconds_between_file_checks).seconds.do(
-    update_domains_if_md5_changed)
+if is_hash_sum_check_enabled:
+    schedule.every(seconds_between_file_checks).seconds.do(
+        update_domains_if_md5_changed)
+
 schedule.every(seconds_between_checks_for_outdating).seconds.do(
     update_outdated_info_in_redis)
 

@@ -159,3 +159,5 @@ spec:
               value: "600"
             - name: SECONDS_BETWEEN_FILE_CHECKS
               value: "30"
+            - name: IS_HASH_SUM_CHECK_ENABLED
+              value: "False"
