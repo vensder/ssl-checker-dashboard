@@ -56,8 +56,8 @@ jobs:
     - name: Integration test
       run: |
         #!/usr/bin/env bash
-        docker-compose stop -t 0
-        docker-compose rm -f
+        docker-compose -f docker-compose-test.yml stop -t 0
+        docker-compose -f docker-compose-test.yml rm -f
 
         set -e -x
         echo '
@@ -67,24 +67,24 @@ jobs:
         notexisting.domain
 
         ' > cron/domains.lst
-        docker-compose build
-        docker-compose up -d cron redis
-        sleep 10
-        docker-compose ps
-        docker-compose logs redis
-        docker-compose logs cron
-        docker-compose exec -T redis redis-cli  --scan
-        docker-compose up -d web-app
+        docker-compose -f docker-compose-test.yml build
+        docker-compose -f docker-compose-test.yml up -d cron redis
         sleep 5
-        docker-compose ps
+        docker-compose -f docker-compose-test.yml ps
+        docker-compose -f docker-compose-test.yml logs redis
+        docker-compose -f docker-compose-test.yml logs cron
+        docker-compose -f docker-compose-test.yml exec -T redis redis-cli  --scan
+        docker-compose -f docker-compose-test.yml up -d web-app
+        sleep 2
+        docker-compose -f docker-compose-test.yml ps
         curl localhost:8080
         curl -s -o /dev/null -w "%{http_code}" localhost:8080/health | grep 200
         curl -s localhost:8080 | grep 'google.com'
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
         curl -s localhost:8080/errors | grep 'notexisting.domain'
-        docker-compose stop -t 0
-        docker-compose rm -f
+        docker-compose -f docker-compose-test.yml stop -t 0
+        docker-compose -f docker-compose-test.yml rm -f
 
     - name: Build app image
       run: docker build app/ --file app/Dockerfile --tag ssl-checker
