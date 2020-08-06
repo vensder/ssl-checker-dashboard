@@ -7,7 +7,8 @@ import redis
 from multiprocessing.pool import ThreadPool as Pool
 import hashlib
 from os import environ
-from distutils.util import strtobool    
+from distutils.util import strtobool
+from math import ceil
 
 redis_host = 'redis'
 if 'REDIS_HOST' in environ and environ['REDIS_HOST']:
@@ -115,7 +116,7 @@ def decode_redis_value(value):
 
 def update_all_domains_in_redis(domains_set):
     if is_redis_available():
-        pool = Pool(len(domains_set))
+        pool = Pool(ceil(len(domains_set)/10))
         for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
             if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > seconds_between_info_updates):
                 r.hset(name=result_tuple[0], mapping={
