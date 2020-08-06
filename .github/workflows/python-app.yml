@@ -66,8 +66,9 @@ jobs:
         ' > cron/domains.lst
         docker-compose build
         docker-compose up -d cron redis
-        sleep 15
+        sleep 10
         docker-compose up -d web-app
+        sleep 5
         docker-compose ps
         curl -s -o /dev/null -w "%{http_code}" localhost:8080/health | grep 200
         curl -s localhost:8080 | grep 'google.com'
