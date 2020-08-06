@@ -60,6 +60,7 @@ jobs:
         docker-compose -f docker-compose-test.yml rm -f
 
         set -e -x
+
         echo '
 
         google.com
@@ -73,7 +74,7 @@ jobs:
         docker-compose -f docker-compose-test.yml ps
         docker-compose -f docker-compose-test.yml logs redis
         docker-compose -f docker-compose-test.yml logs cron
-        docker-compose -f docker-compose-test.yml exec -T redis redis-cli  --scan
+        docker-compose -f docker-compose-test.yml exec -T redis redis-cli --scan
         docker-compose -f docker-compose-test.yml up -d web-app
         sleep 2
         docker-compose -f docker-compose-test.yml ps
@@ -83,6 +84,19 @@ jobs:
         curl -s localhost:8080/all | grep 'google.com'
         curl -s localhost:8080/days | grep 'google.com'
         curl -s localhost:8080/errors | grep 'notexisting.domain'
+
+        docker cp cron/domains_medium.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
+        sleep 30
+        docker-compose -f docker-compose-test.yml logs cron
+        docker-compose -f docker-compose-test.yml exec -T redis redis-cli --scan
+        docker-compose -f docker-compose-test.yml ps
+        curl localhost:8080 | grep href
+        curl -s -o /dev/null -w "%{http_code}" localhost:8080/health | grep 200
+        curl -s localhost:8080 | grep 'google.com'
+        curl -s localhost:8080/all | grep 'google.com'
+        curl -s localhost:8080/days | grep 'google.com'
+        curl -s localhost:8080/errors | grep 'notexisting.domain'
+        
         docker-compose -f docker-compose-test.yml stop -t 0
         docker-compose -f docker-compose-test.yml rm -f
 
