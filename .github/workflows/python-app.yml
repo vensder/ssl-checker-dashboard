@@ -89,13 +89,13 @@ jobs:
         git checkout -- cron/domains.lst
         docker-compose -f docker-compose-test.yml build
         docker-compose -f docker-compose-test.yml up -d cron redis
-        sleep 15
+        sleep 40
         docker-compose -f docker-compose-test.yml ps
         docker-compose -f docker-compose-test.yml logs redis
         docker-compose -f docker-compose-test.yml logs cron
         docker-compose -f docker-compose-test.yml exec -T redis redis-cli  --scan
         docker-compose -f docker-compose-test.yml up -d web-app
-        sleep 2
+        sleep 10
         docker-compose -f docker-compose-test.yml ps
         curl localhost:8080
         curl -s -o /dev/null -w "%{http_code}" localhost:8080/health | grep 200
