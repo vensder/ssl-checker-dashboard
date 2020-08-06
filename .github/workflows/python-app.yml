@@ -71,6 +71,8 @@ jobs:
         docker-compose up -d cron redis
         sleep 10
         docker-compose ps
+        docker-compose logs redis
+        docker-compose logs cron
         docker-compose exec redis redis-cli  --scan
         docker-compose up -d web-app
         sleep 5
