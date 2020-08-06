@@ -116,11 +116,20 @@ def decode_redis_value(value):
 
 def update_all_domains_in_redis(domains_set):
     if is_redis_available():
-        pool = Pool(ceil(len(domains_set)/10))
-        for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, domains_set):
-            if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > seconds_between_info_updates):
-                r.hset(name=result_tuple[0], mapping={
-                    'exp': result_tuple[1], 'updated': round(time.time())})
+        domains_chunk_size = int(len(domains_set)/10)
+        begin = 0
+        end = domains_chunk_size
+        while begin < len(domains_set):
+            sub_set = set(list(domains_set)[begin:end])
+            pool = Pool(len(sub_set))
+            for result_tuple in pool.imap_unordered(ssl.tuple_domain_unixtime_expiration, sub_set):
+                if (not r.hget(result_tuple[0], 'exp')) or (round(time.time()) - decode_redis_value(r.hget(result_tuple[0], 'updated')) > seconds_between_info_updates):
+                    r.hset(name=result_tuple[0], mapping={
+                        'exp': result_tuple[1], 'updated': round(time.time())})
+            print(begin, end, "Updated info for domains:" + str(sub_set))
+            time.sleep(1)
+            begin += domains_chunk_size
+            end += domains_chunk_size
 
 
 def update_outdated_info_in_redis():
