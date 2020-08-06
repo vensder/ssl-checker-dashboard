@@ -31,7 +31,7 @@ services:
       - TZ=Pacific/Auckland
       - SECONDS_BETWEEN_INFO_UPDATES=7200
       - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=600
-      - SECONDS_BETWEEN_UPDATE_ABSENT=10
+      - SECONDS_BETWEEN_UPDATE_ABSENT=1
     command:
       [
         "--worker-tmp-dir /dev/shm",
