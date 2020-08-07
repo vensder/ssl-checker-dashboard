@@ -9,6 +9,7 @@ on:
       - 'README.*'
       - 'img/**'
       - 'k8s/**'
+      - 'LICENSE'
     branches:
       - master
     tags:
@@ -19,6 +20,7 @@ on:
       - 'README.*'
       - 'img/**'
       - 'k8s/**'
+      - 'LICENSE'
     branches:
       - master
 
