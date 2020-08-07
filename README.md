@@ -2,9 +2,9 @@
 
 [![Python application](https://github.com/vensder/ssl-checker-dashboard/workflows/Python%20application/badge.svg)](https://github.com/vensder/ssl-checker-dashboard/actions?query=workflow%3A%22Python+application%22)
 
-SSL Checker Dashboard builded using Bottle Python micro web-framework (Work In Progress).
+The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the domains from the `cron/domains.lst` file.
 
-The dashboard allows you to overview the expiration days for the SSL certificates of the domains from the `cron/domains.lst` file.
+The dashboard built using Bottle Python micro web-framework and Docker (Work In Progress). You can run it in Kubernetes (see `./k8s` directory)
 
 ![SSL Checker Dashboard](./img/screenshot.png?raw=true)
 
