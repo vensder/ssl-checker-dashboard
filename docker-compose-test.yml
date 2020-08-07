@@ -14,7 +14,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - SECONDS_BETWEEN_INFO_UPDATES=7200
-      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=600
+      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=10
       - SECONDS_BETWEEN_FILE_CHECKS=3
       - IS_HASH_SUM_CHECK_ENABLED=True
 
@@ -30,8 +30,8 @@ services:
       - REDIS_HOST=redis
       - TZ=Pacific/Auckland
       - SECONDS_BETWEEN_INFO_UPDATES=7200
-      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=600
-      - SECONDS_BETWEEN_UPDATE_ABSENT=1
+      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=10
+      - SECONDS_BETWEEN_UPDATE_ABSENT=10
     command:
       [
         "--worker-tmp-dir /dev/shm",

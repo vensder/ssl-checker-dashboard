@@ -14,9 +14,9 @@ services:
     environment:
       - REDIS_HOST=redis
       - SECONDS_BETWEEN_INFO_UPDATES=7200
-      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=600
+      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=60
       - SECONDS_BETWEEN_FILE_CHECKS=30
-      - IS_HASH_SUM_CHECK_ENABLED=False
+      - IS_HASH_SUM_CHECK_ENABLED=True
 
   web-app:
     build:
@@ -30,7 +30,7 @@ services:
       - REDIS_HOST=redis
       - TZ=Pacific/Auckland
       - SECONDS_BETWEEN_INFO_UPDATES=7200
-      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=600
+      - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=60
       - SECONDS_BETWEEN_UPDATE_ABSENT=10
     command:
       [
@@ -39,12 +39,4 @@ services:
         "--workers=2",
         "-b 0.0.0.0:8080",
       ]
-    # command:
-    #   [
-    #     "--worker-tmp-dir /dev/shm",
-    #     "--log-file=-",
-    #     "--workers=2",
-    #     "--threads=4",
-    #     "--worker-class=gthread",
-    #     "-b 0.0.0.0:8080",
-    #   ]
+
