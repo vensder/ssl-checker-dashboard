@@ -58,3 +58,19 @@ grep ssl-checks /etc/hosts
 ```
 
 Open in browser: <http://ssl-checks.local/>
+
+## How to copy your own domains list
+
+You can copy your own domains list inside the `cron` container, and `cron` service will update the domains info for the new domains.
+
+If you use docker-compose, just run the `cp` command:
+
+```bash
+docker cp your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
+```
+
+Or, if you use Kubernetes, copy your file inside the `cron` Pod, for example:
+
+```bash
+kubectl cp your_domains.lst default/cron-68c997f7c-c49hl:/home/app/domains.lst
+```
