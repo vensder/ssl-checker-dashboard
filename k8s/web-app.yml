@@ -156,8 +156,8 @@ spec:
             - name: SECONDS_BETWEEN_INFO_UPDATES
               value: "7200"
             - name: SECONDS_BETWEEN_CHECKS_FOR_OUTDATING
-              value: "600"
+              value: "10"
             - name: SECONDS_BETWEEN_FILE_CHECKS
               value: "30"
             - name: IS_HASH_SUM_CHECK_ENABLED
-              value: "False"
+              value: "True"
