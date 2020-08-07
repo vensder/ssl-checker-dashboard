@@ -157,7 +157,12 @@ def static(path):
 
 @route('/health')
 def health_check():
-    theBody = json.dumps({'health': 'ok'})
+    theBody = json.dumps({
+        'health': 'ok',
+        'redis_available': f"{is_redis_available()}",
+        'domains_in_redis': f"{r.dbsize() if is_redis_available() else 'unknown'}",
+        'domains_in_webapp': f"{len(domains_days_dict)}"
+        })
     headers = {'Content-type': 'application/json'}
     return HTTPResponse(status=200, body=theBody, headers=headers)
 
@@ -174,7 +179,11 @@ def show_all():
         domains_bad=sort_by_key(get_info_from_dict(
             domains_dict=domains_days_dict, info_type="errors", truncate_errors=20)),
         refresh=0,
-        hostname=hostname)
+        hostname=hostname,
+        redis_available=f"{is_redis_available()}",
+        domains_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
+        domains_in_webapp=f"{len(domains_days_dict)}"
+    )
 
 
 @route('/hosts')
@@ -187,7 +196,11 @@ def show_hosts():
         domains_days=sort_by_key(get_info_from_dict(
             domains_days_dict, info_type='all', truncate_errors=8)),
         refresh=0,
-        hostname=hostname)
+        hostname=hostname,
+        redis_available=f"{is_redis_available()}",
+        domains_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
+        domains_in_webapp=f"{len(domains_days_dict)}"
+    )
 
 
 @route('/errors')
@@ -200,7 +213,11 @@ def show_hosts():
         domains_days=sort_by_key(get_info_from_dict(
             domains_dict=domains_days_dict, info_type="errors", truncate_errors=0)),
         refresh=0,
-        hostname=hostname)
+        hostname=hostname,
+        redis_available=f"{is_redis_available()}",
+        domains_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
+        domains_in_webapp=f"{len(domains_days_dict)}"
+    )
 
 
 @route('/days')
@@ -213,7 +230,11 @@ def show_hosts():
         domains_days=sort_by_value(get_info_from_dict(
             domains_dict=domains_days_dict, info_type="days", truncate_errors=True)),
         refresh=0,
-        hostname=hostname)
+        hostname=hostname,
+        redis_available=f"{is_redis_available()}",
+        domains_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
+        domains_in_webapp=f"{len(domains_days_dict)}"
+    )
 
 
 # TODO: add update outdated from redis

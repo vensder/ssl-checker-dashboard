@@ -25,5 +25,8 @@
 
 <body>
     <header>
-    Running on: {{ hostname }}
+    Running on: {{ hostname }} 
+    | Redis available: {{ redis_available }}
+    | Domains in Redis: {{ domains_in_redis }}
+    | Domains in Web-App: {{ domains_in_webapp }}
     </header>

@@ -24,7 +24,9 @@ logs_containers () {
 }
 
 test_webapp () {
-  curl localhost:8080 | grep href
+  curl -s localhost:8080/health | grep 'ok'
+  curl -s localhost:8080/health | grep '"redis_available": "True"'
+  curl -s localhost:8080 | grep href
   curl -s -o /dev/null -w "%{http_code}" localhost:8080/health | grep 200
   curl -s localhost:8080 | grep 'google.com'
   curl -s localhost:8080/all | grep 'google.com'
@@ -38,7 +40,7 @@ get_redis_keys () {
 
 remove_all_containers
 cp tests/domains_small.lst cron/domains.lst
-build_images "cron"
+build_images "cron" "web-app"
 up_containers "redis" "cron"
 sleep 5
 list_all_containers
