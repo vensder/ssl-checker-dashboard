@@ -27,12 +27,4 @@ services:
         "--workers=2",
         "-b 0.0.0.0:8080",
       ]
-    # command:
-    #   [
-    #     "--worker-tmp-dir /dev/shm",
-    #     "--log-file=-",
-    #     "--workers=2",
-    #     "--threads=4",
-    #     "--worker-class=gthread",
-    #     "-b 0.0.0.0:8080",
-    #   ]
+
