@@ -51,7 +51,7 @@ logs_containers "web-app"
 
 test_webapp
 
-docker cp test/domains_medium.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
+docker cp tests/domains_medium.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
 sleep 30
 list_all_containers
 logs_containers "cron"
