@@ -17,6 +17,7 @@ services:
       - SECONDS_BETWEEN_CHECKS_FOR_OUTDATING=10
       - SECONDS_BETWEEN_FILE_CHECKS=3
       - IS_HASH_SUM_CHECK_ENABLED=True
+      - IS_FIRST_LOAD_FROM_FILE_ENABLED=True
 
   web-app:
     build:
