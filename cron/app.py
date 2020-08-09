@@ -43,7 +43,8 @@ if "IS_HASH_SUM_CHECK_ENABLED" in environ:
 is_first_load_from_file_enabled = False
 if "IS_FIRST_LOAD_FROM_FILE_ENABLED" in environ:
     is_first_load_from_file_enabled = strtobool(
-        environ["IS_FIRST_LOAD_FROM_FILE_ENABLED"])
+        environ["IS_FIRST_LOAD_FROM_FILE_ENABLED"]
+    )
 
 
 domains_file = "domains.lst"
@@ -99,7 +100,7 @@ def update_all_domains_in_redis(domains_set):
             domains_chunk_size = len(domains_set)
         begin = 0
         while begin < len(domains_set):
-            sub_set = set(list(domains_set)[begin: begin + domains_chunk_size])
+            sub_set = set(list(domains_set)[begin : begin + domains_chunk_size])
             pool = Pool(len(sub_set))
             for result_tuple in pool.imap_unordered(
                 ssl.tuple_domain_unixtime_expiration, sub_set
@@ -111,8 +112,7 @@ def update_all_domains_in_redis(domains_set):
                 ):
                     r.hset(
                         name=result_tuple[0],
-                        mapping={"exp": result_tuple[1],
-                                 "updated": round(time.time())},
+                        mapping={"exp": result_tuple[1], "updated": round(time.time())},
                     )
             print("Updated info for domains: {}".format(str(sub_set)))
             time.sleep(1)
@@ -124,8 +124,7 @@ def update_outdated_info_in_redis():
         from_redis_set = set()
         for domain in domains_set:
             if (not r.hget(domain, "exp")) or (
-                round(time.time()) -
-                decode_redis_value(r.hget(domain, "updated"))
+                round(time.time()) - decode_redis_value(r.hget(domain, "updated"))
                 > seconds_between_info_updates
             ):
                 from_redis_set.add(domain)
@@ -133,7 +132,7 @@ def update_outdated_info_in_redis():
             update_all_domains_in_redis(from_redis_set)
 
 
-def update_all_missing_domains_in_redis():
+def sync_domains_with_redis():
     from_redis_set = set()
     if is_redis_available():
         for key in r.keys("*"):
@@ -141,6 +140,9 @@ def update_all_missing_domains_in_redis():
     difference = domains_set - from_redis_set
     if difference:
         update_all_domains_in_redis(difference)
+    difference = from_redis_set - domains_set
+    if difference:
+        r.delete(*difference)
 
 
 def update_domains_if_md5_changed():
@@ -150,7 +152,7 @@ def update_domains_if_md5_changed():
     if md5_hash != md5_new:
         print("updating domains from file")
         domains_set = set(update_domains_list_from_file())
-        update_all_missing_domains_in_redis()
+        sync_domains_with_redis()
         md5_hash = md5_new
 
 
