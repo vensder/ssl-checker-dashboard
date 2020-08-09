@@ -90,6 +90,16 @@ def update_absent_from_redis():
         get_domain_info_from_redis(domain)
 
 
+def sync_with_redis():
+    if is_redis_available():
+        domains_in_redis_set = get_keys_from_redis()
+        domains_in_app_set = get_domains_from_dict()
+        for domain in domains_in_redis_set - domains_in_app_set:
+            get_domain_info_from_redis(domain)
+        for domain in domains_in_app_set - domains_in_redis_set:
+            del domains_days_dict[domain]
+
+
 def update_outdated_from_redis():
     if is_redis_available():
         for domain in domains_days_dict:
@@ -275,7 +285,7 @@ job1 = scheduler.add_job(
     update_outdated_from_redis, "interval", seconds=seconds_between_checks_for_outdating
 )
 job2 = scheduler.add_job(
-    update_absent_from_redis, "interval", seconds=seconds_between_update_absent
+    sync_with_redis, "interval", seconds=seconds_between_update_absent
 )
 scheduler.start()
 
