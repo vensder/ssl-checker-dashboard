@@ -13,7 +13,6 @@ The dashboard built using Bottle Python micro web-framework and Docker (Work In 
 ```bash
 docker-compose build
 docker-compose up -d cron redis
-sleep 10
 docker-compose up -d web-app
 docker-compose ps
 ```
@@ -61,11 +60,21 @@ Open in browser: <http://ssl-checks.local/>
 
 ## How to copy your own domains list
 
-You can copy your own domains list inside the `cron` container, and `cron` service will update the domains info for the new domains.
+If you don't want to load default demo list of domains during the startup, set the parameter in `docker-compose.yml` file to False:
+
+```yaml
+IS_FIRST_LOAD_FROM_FILE_ENABLED=False
+```
+
+Then run containers and copy your own file inside the `cron` container, and `cron` service will update the domains info for the new domains.
 
 If you use docker-compose, just run the `cp` command:
 
 ```bash
+docker-compose stop -t 0
+docker-compose rm -f
+docker-compose build
+docker-compose up -d
 docker cp your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
 ```
 

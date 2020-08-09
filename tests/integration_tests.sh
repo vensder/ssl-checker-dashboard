@@ -70,4 +70,4 @@ list_all_containers
 test_webapp
 remove_all_containers
 
-cp -f tests/domains_small.lst cron/domains.lst
+git checkout -- cron/domains.lst
