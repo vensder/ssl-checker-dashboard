@@ -31,7 +31,7 @@ test_webapp () {
   curl -s localhost:8080 | grep 'google.com'
   curl -s localhost:8080/all | grep 'google.com'
   curl -s localhost:8080/days | grep 'google.com'
-  curl -s localhost:8080/errors | grep 'notexisting.domain'
+  curl -s localhost:8080/errors | grep 'nonexisting.domain'
 }
 
 get_redis_keys () {
@@ -39,7 +39,8 @@ get_redis_keys () {
 }
 
 remove_all_containers
-cp tests/domains_small.lst cron/domains.lst
+
+cp tests/domains_mini.lst cron/domains.lst
 build_images "cron" "web-app"
 up_containers "redis" "cron"
 sleep 5
@@ -50,30 +51,23 @@ up_containers "web-app"
 sleep 2
 list_all_containers
 logs_containers "web-app"
-
 test_webapp
 
 docker cp tests/domains_medium.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
 sleep 30
 list_all_containers
-logs_containers "cron"
+logs_containers "redis" "cron"
 get_redis_keys
-
 test_webapp
 
-remove_all_containers
-
-git checkout -- cron/domains.lst
-build_images "cron"
-
-up_containers "redis" "cron"
-sleep 40
+docker cp tests/domains_large.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
+sleep 30
 list_all_containers
 logs_containers "redis" "cron"
 get_redis_keys
-up_containers "web-app"
 sleep 10
-
 list_all_containers
 test_webapp
 remove_all_containers
+
+cp -f tests/domains_small.lst cron/domains.lst
