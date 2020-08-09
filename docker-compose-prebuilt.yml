@@ -10,6 +10,8 @@ services:
     image: vensder/ssl-checker-cron
     depends_on:
       - redis
+    environment:
+      - IS_FIRST_LOAD_FROM_FILE_ENABLED=True
 
   web-app:
     image: vensder/ssl-checker

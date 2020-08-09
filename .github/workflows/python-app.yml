@@ -10,6 +10,8 @@ on:
       - 'img/**'
       - 'k8s/**'
       - 'LICENSE'
+      - 'docker-compose-prebuilt.yml'
+      - 'docker-compose.yml'
     branches:
       - master
     tags:
@@ -21,6 +23,8 @@ on:
       - 'img/**'
       - 'k8s/**'
       - 'LICENSE'
+      - 'docker-compose-prebuilt.yml'
+      - 'docker-compose.yml'
     branches:
       - master
 
