@@ -73,7 +73,6 @@ If you use docker-compose, just run the `cp` command:
 ```bash
 docker-compose stop -t 0
 docker-compose rm -f
-docker-compose build
 docker-compose up -d
 docker cp path-to/your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
 ```
