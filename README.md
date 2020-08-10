@@ -75,11 +75,11 @@ docker-compose stop -t 0
 docker-compose rm -f
 docker-compose build
 docker-compose up -d
-docker cp your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
+docker cp path-to/your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
 ```
 
 Or, if you use Kubernetes, copy your file inside the `cron` Pod, for example:
 
 ```bash
-kubectl cp your_domains.lst default/cron-68c997f7c-c49hl:/home/app/domains.lst
+kubectl cp path-to/your_domains.lst default/$(kubectl get pods -l app=cron --no-headers=true | cut -d' ' -f1):/home/app/domains.lst
 ```
