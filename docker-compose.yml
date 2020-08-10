@@ -1,4 +1,4 @@
-version: "3"
+version: "2.2"
 
 services:
   redis:
@@ -22,8 +22,9 @@ services:
   web-app:
     build:
       context: ./app
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
+    scale: 3
     depends_on:
       - redis
       - cron
@@ -41,3 +42,11 @@ services:
         "-b 0.0.0.0:8080",
       ]
 
+  nginx:
+    image: nginx:1.18-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx_conf/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web-app
