@@ -4,7 +4,11 @@
 
 The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the domains from the `cron/domains.lst` file.
 
-The dashboard built using Bottle Python micro web-framework and Docker (Work In Progress). You can run it in Kubernetes (see `./k8s` directory)
+The dashboard built using Bottle Python micro web-framework and Docker and consist from the services: web-app (scalable), redis, cron-service.
+
+ You can run it in Kubernetes (see `./k8s` directory)
+
+![Diagram](./img/diagrams/ssl-checker-diagram.png?raw=true)
 
 ![SSL Checker Dashboard](./img/screenshot.png?raw=true)
 
@@ -12,8 +16,7 @@ The dashboard built using Bottle Python micro web-framework and Docker (Work In 
 
 ```bash
 docker-compose build
-docker-compose up -d cron redis
-docker-compose up -d web-app
+docker-compose up -d
 docker-compose ps
 ```
 
