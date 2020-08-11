@@ -4,7 +4,11 @@
 
 The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the domains from the `cron/domains.lst` file.
 
-The dashboard built using Bottle Python micro web-framework and Docker (Work In Progress). You can run it in Kubernetes (see `./k8s` directory)
+The dashboard built using Bottle Python micro web-framework and Docker and consist from the services: web-app (scalable), redis, cron-service.
+
+ You can run it in Kubernetes (see `./k8s` directory)
+
+![Diagram](./img/diagrams/ssl-checker-diagram.png?raw=true)
 
 ![SSL Checker Dashboard](./img/screenshot.png?raw=true)
 
@@ -12,8 +16,7 @@ The dashboard built using Bottle Python micro web-framework and Docker (Work In 
 
 ```bash
 docker-compose build
-docker-compose up -d cron redis
-docker-compose up -d web-app
+docker-compose up -d
 docker-compose ps
 ```
 
@@ -27,10 +30,10 @@ ab -c 100 -n 10000 http://127.0.0.1:8080/all
 
 ## How to run in Kubernetes
 
-Tested in MicroK8s: <https://microk8s.io/>
+Tested in MicroK8s: <https://microk8s.io/>. How to configure MicroK8s: <https://microk8s.io/docs>.
 
 ```bash
-sudo microk8s enable ingress
+sudo microk8s enable dns ingress
 ```
 
 ```bash
@@ -73,13 +76,12 @@ If you use docker-compose, just run the `cp` command:
 ```bash
 docker-compose stop -t 0
 docker-compose rm -f
-docker-compose build
 docker-compose up -d
-docker cp your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
+docker cp path-to/your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
 ```
 
 Or, if you use Kubernetes, copy your file inside the `cron` Pod, for example:
 
 ```bash
-kubectl cp your_domains.lst default/cron-68c997f7c-c49hl:/home/app/domains.lst
+kubectl cp path-to/your_domains.lst default/$(kubectl get pods -l app=cron --no-headers=true | cut -d' ' -f1):/home/app/domains.lst
 ```
