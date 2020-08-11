@@ -25,8 +25,14 @@
 
 <body>
     <header>
-    Running on: {{ hostname }} 
-    | Redis available: {{ redis_available }}
-    | Domains in Redis: {{ domains_in_redis }}
-    | Domains in Web-App: {{ domains_in_webapp }}
+        <p>
+            Running on: {{ hostname }}
+            | Redis available: {{ redis_available }}
+            | Domains in Redis: {{ domains_in_redis }}
+            | Domains in Web-App: {{ domains_in_webapp }}
+            | <a href="/all"> All</a>
+            | <a href="/errors"> Errors</a>
+            | <a href="/days"> Days</a>
+            | <a href="/health"> Health</a>
+        </p>
     </header>
