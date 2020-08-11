@@ -30,10 +30,10 @@ ab -c 100 -n 10000 http://127.0.0.1:8080/all
 
 ## How to run in Kubernetes
 
-Tested in MicroK8s: <https://microk8s.io/>
+Tested in MicroK8s: <https://microk8s.io/>. How to configure MicroK8s: <https://microk8s.io/docs>.
 
 ```bash
-sudo microk8s enable ingress
+sudo microk8s enable dns ingress
 ```
 
 ```bash
