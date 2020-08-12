@@ -1,0 +1,165 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+  labels:
+    app: dashboard
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: vensder/ssl-checker-dashboard:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "600m"
+            limits:
+              memory: "128Mi"
+              cpu: "800m"
+          ports:
+            - containerPort: 8080
+              name: dashboard
+          command: ["gunicorn", "app:app"]
+          args:
+            [
+              "--worker-tmp-dir /dev/shm",
+              "--log-file=-",
+              "--workers=1",
+              "-b 0.0.0.0:8080",
+            ]
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: TZ
+              value: "Pacific/Auckland"
+            - name: SECONDS_BETWEEN_INFO_UPDATES
+              value: "7200"
+            - name: SECONDS_BETWEEN_CHECKS_FOR_OUTDATING
+              value: "600"
+            - name: SECONDS_BETWEEN_UPDATE_ABSENT
+              value: "10"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 3
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: dashboard
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: dashboard
+spec:
+  rules:
+    - host: ssl-checks.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: dashboard
+              servicePort: 8080
+---
+# redis
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+  name: redis
+spec:
+  clusterIP: None
+  ports:
+    - name: redis-service
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:6.0.5-alpine
+          ports:
+            - containerPort: 6379
+              name: redis
+---
+# checker
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checker
+  labels:
+    app: checker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checker
+  template:
+    metadata:
+      labels:
+        app: checker
+    spec:
+      containers:
+        - name: checker
+          image: vensder/ssl-cert-checker:latest
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: SECONDS_BETWEEN_INFO_UPDATES
+              value: "7200"
+            - name: SECONDS_BETWEEN_CHECKS_FOR_OUTDATING
+              value: "10"
+            - name: SECONDS_BETWEEN_FILE_CHECKS
+              value: "30"
+            - name: IS_HASH_SUM_CHECK_ENABLED
+              value: "True"
+            - name: IS_FIRST_LOAD_FROM_FILE_ENABLED
+              value: "False"
