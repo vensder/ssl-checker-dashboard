@@ -1,6 +1,6 @@
 # SSL Checker Dashboard
 
-[![Python application](https://github.com/vensder/ssl-checker-dashboard-dashboard/workflows/Python%20application/badge.svg)](https://github.com/vensder/ssl-checker-dashboard-dashboard/actions?query=workflow%3A%22Python+application%22)
+[![Python application](https://github.com/vensder/ssl-checker-dashboard/workflows/Python%20application/badge.svg)](https://github.com/vensder/ssl-checker-dashboard/actions?query=workflow%3A%22Python+application%22)
 
 The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the hosts from the `checker/hosts.lst` file.
 
@@ -8,7 +8,7 @@ The dashboard built using Bottle Python micro web-framework and Docker and consi
 
  You can run it in Kubernetes (see `./k8s` directory)
 
-![Diagram](./img/diagrams/ssl-checker-dashboard-diagram.png?raw=true)
+![Diagram](./img/diagrams/ssl-checker-diagram.png?raw=true)
 
 ![SSL Checker Dashboard](./img/screenshot.png?raw=true)
 
@@ -77,7 +77,7 @@ If you use docker-compose, just run the `cp` command:
 docker-compose stop -t 0
 docker-compose rm -f
 docker-compose up -d
-docker cp path-to/your_hosts.lst ssl-checker-dashboard-dashboard_checker_1:/home/app/hosts.lst
+docker cp path-to/your_hosts.lst ssl-checker-dashboard_checker_1:/home/app/hosts.lst
 ```
 
 Or, if you use Kubernetes, copy your file inside the `checker` Pod, for example:
