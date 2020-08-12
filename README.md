@@ -1,14 +1,14 @@
 # SSL Checker Dashboard
 
-[![Python application](https://github.com/vensder/ssl-checker-dashboard/workflows/Python%20application/badge.svg)](https://github.com/vensder/ssl-checker-dashboard/actions?query=workflow%3A%22Python+application%22)
+[![Python application](https://github.com/vensder/ssl-checker-dashboard-dashboard/workflows/Python%20application/badge.svg)](https://github.com/vensder/ssl-checker-dashboard-dashboard/actions?query=workflow%3A%22Python+application%22)
 
-The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the domains from the `cron/domains.lst` file.
+The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the hosts from the `checker/hosts.lst` file.
 
-The dashboard built using Bottle Python micro web-framework and Docker and consist from the services: web-app (scalable), redis, cron-service.
+The dashboard built using Bottle Python micro web-framework and Docker and consist from the services: dashboard (scalable), redis, checker-service.
 
  You can run it in Kubernetes (see `./k8s` directory)
 
-![Diagram](./img/diagrams/ssl-checker-diagram.png?raw=true)
+![Diagram](./img/diagrams/ssl-checker-dashboard-diagram.png?raw=true)
 
 ![SSL Checker Dashboard](./img/screenshot.png?raw=true)
 
@@ -37,19 +37,19 @@ sudo microk8s enable dns ingress
 ```
 
 ```bash
-kubectl apply -f ./k8s/web-app.yml
-deployment.apps/web-app created
-service/web-app created
-ingress.networking.k8s.io/web-app created
+kubectl apply -f ./k8s/dashboard.yml
+deployment.apps/dashboard created
+service/dashboard created
+ingress.networking.k8s.io/dashboard created
 service/redis created
 deployment.apps/redis created
-deployment.apps/cron created
+deployment.apps/checker created
 ```
 
 ```bash
 kubectl get ingress
 NAME      CLASS    HOSTS              ADDRESS     PORTS   AGE
-web-app   <none>   ssl-checks.local   127.0.0.1   80      47s
+dashboard   <none>   ssl-checks.local   127.0.0.1   80      47s
 ```
 
 Add `ssl-checks.local` host to `/etc/hosts` file:
@@ -61,15 +61,15 @@ grep ssl-checks /etc/hosts
 
 Open in browser: <http://ssl-checks.local/>
 
-## How to copy your own domains list
+## How to copy your own hosts list
 
-If you don't want to load default demo list of domains during the startup, set the parameter in `docker-compose.yml` file to False:
+If you don't want to load default demo list of hosts during the startup, set the parameter in `docker-compose.yml` file to False:
 
 ```yaml
 IS_FIRST_LOAD_FROM_FILE_ENABLED=False
 ```
 
-Then run containers and copy your own file inside the `cron` container, and `cron` service will update the domains info for the new domains.
+Then run containers and copy your own file inside the `checker` container, and `checker` service will update the hosts info for the new hosts.
 
 If you use docker-compose, just run the `cp` command:
 
@@ -77,11 +77,11 @@ If you use docker-compose, just run the `cp` command:
 docker-compose stop -t 0
 docker-compose rm -f
 docker-compose up -d
-docker cp path-to/your_domains.lst ssl-checker-dashboard_cron_1:/home/app/domains.lst
+docker cp path-to/your_hosts.lst ssl-checker-dashboard-dashboard_checker_1:/home/app/hosts.lst
 ```
 
-Or, if you use Kubernetes, copy your file inside the `cron` Pod, for example:
+Or, if you use Kubernetes, copy your file inside the `checker` Pod, for example:
 
 ```bash
-kubectl cp path-to/your_domains.lst default/$(kubectl get pods -l app=cron --no-headers=true | cut -d' ' -f1):/home/app/domains.lst
+kubectl cp path-to/your_hosts.lst default/$(kubectl get pods -l dashboard=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
 ```

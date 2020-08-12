@@ -6,20 +6,20 @@ services:
     ports:
       - "6379:6379"
 
-  cron:
-    image: vensder/ssl-checker-cron
+  checker:
+    image: vensder/ssl-cert-checker
     depends_on:
       - redis
     environment:
       - IS_FIRST_LOAD_FROM_FILE_ENABLED=True
 
-  web-app:
-    image: vensder/ssl-checker
+  dashboard:
+    image: vensder/ssl-checker-dashboard
     ports:
       - "8080:8080"
     depends_on:
       - redis
-      - cron
+      - checker
     environment:
       - REDIS_HOST=redis
     command:

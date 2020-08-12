@@ -1,2 +1,0 @@
-redis==3.5.3
-schedule==0.6.0

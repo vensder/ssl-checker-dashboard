@@ -63,18 +63,18 @@ jobs:
       run: |
         ./tests/integration_tests.sh
 
-    - name: Build app image
-      run: docker build app/ --file app/Dockerfile --tag ssl-checker
+    - name: Build dashboard image
+      run: docker build dashboard/ --file dashboard/Dockerfile --tag ssl-checker-dashboard
 
-    - name: Build cron image
-      run: docker build cron/ --file cron/Dockerfile --tag ssl-checker-cron
+    - name: Build checker image
+      run: docker build checker/ --file checker/Dockerfile --tag  ssl-cert-checker
 
     - name: Log into registry
       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-    - name: Push app image
+    - name: Push dashboard image
       run: |
-        IMAGE_ID=vensder/ssl-checker
+        IMAGE_ID=vensder/ssl-checker-dashboard
 
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -91,12 +91,12 @@ jobs:
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
 
-        docker tag ssl-checker $IMAGE_ID:$VERSION
+        docker tag ssl-checker-dashboard $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
 
-    - name: Push cron image
+    - name: Push checker image
       run: |
-        IMAGE_ID=vensder/ssl-checker-cron
+        IMAGE_ID=vensder/ssl-cert-checker
 
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -113,5 +113,5 @@ jobs:
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
 
-        docker tag ssl-checker-cron $IMAGE_ID:$VERSION
+        docker tag ssl-cert-checker $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION

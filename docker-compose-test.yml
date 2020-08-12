@@ -6,9 +6,9 @@ services:
     ports:
       - "6379:6379"
 
-  cron:
+  checker:
     build:
-      context: ./cron
+      context: ./checker
     depends_on:
       - redis
     environment:
@@ -19,14 +19,14 @@ services:
       - IS_HASH_SUM_CHECK_ENABLED=True
       - IS_FIRST_LOAD_FROM_FILE_ENABLED=True
 
-  web-app:
+  dashboard:
     build:
-      context: ./app
+      context: ./dashboard
     ports:
       - "8080:8080"
     depends_on:
       - redis
-      - cron
+      - checker
     environment:
       - REDIS_HOST=redis
       - TZ=Pacific/Auckland

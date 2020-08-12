@@ -11,11 +11,11 @@ graph_attr = {
     "pad": "0"
 }
 
-with Diagram("SSL-checker-diagram", show=False, graph_attr=graph_attr):
+with Diagram("ssl-checker-diagram", show=False, graph_attr=graph_attr):
     Internet("Internet") >> ELB("ingress") >> [
-            Docker("web-app"), 
-            Docker("web-app"),
-            Docker("web-app")
-            ] >> Redis("redis") << Docker("cron")
+            Docker("dashboard"), 
+            Docker("dashboard"),
+            Docker("dashboard")
+            ] >> Redis("redis") << Docker("checker")
 
 
