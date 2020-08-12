@@ -83,5 +83,5 @@ docker cp path-to/your_hosts.lst ssl-checker-dashboard_checker_1:/home/app/hosts
 Or, if you use Kubernetes, copy your file inside the `checker` Pod, for example:
 
 ```bash
-kubectl cp path-to/your_hosts.lst default/$(kubectl get pods -l dashboard=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
+kubectl cp path-to/your_hosts.lst default/$(kubectl get pods -l app=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
 ```
