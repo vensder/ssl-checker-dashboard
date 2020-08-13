@@ -71,4 +71,5 @@ test_dashboard
 remove_all_containers
 
 # git checkout -- checker/hosts.lst
-cp tests/hosts_mini.lst checker/hosts.lst
+# cp tests/hosts_mini.lst checker/hosts.lst
+cp tests/hosts_large.lst checker/hosts.lst
