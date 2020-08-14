@@ -26,13 +26,13 @@
 <body>
     <header>
         <p>
-            Running on: {{ hostname }}
+            <a href="/all"> All</a>
+            | <a href="/good"> Good</a>
+            | <a href="/bad"> Bad</a>
+            | <a href="/health"> Health</a>
+            | Running on: {{ hostname }}
             | Redis available: {{ redis_available }}
             | Hosts in Redis cache: {{ hosts_in_redis }}
             | Hosts in dashboard cache: {{ hosts_in_dashboard_cache }}
-            | <a href="/all"> All</a>
-            | <a href="/errors"> Errors</a>
-            | <a href="/days"> Days</a>
-            | <a href="/health"> Health</a>
         </p>
     </header>

@@ -185,6 +185,7 @@ def health_check():
     theBody = json.dumps(
         {
             "health": "ok",
+            "hostname": f"{hostname}",
             "redis_available": f"{is_redis_available()}",
             "hosts_in_redis": f"{r.dbsize() if is_redis_available() else 'unknown'}",
             "hosts_in_dashboard_cache": f"{len(hosts_days_dict)}",
@@ -220,7 +221,6 @@ def show_all():
 
 
 @route("/hosts")
-@route("/hosts")
 def show_hosts():
     if not hosts_days_dict and is_redis_available():
         get_all_from_redis()
@@ -236,10 +236,10 @@ def show_hosts():
         hosts_in_dashboard_cache=f"{len(hosts_days_dict)}",
     )
 
-
+# TODO: Pass the name of the table for BAD
 @route("/errors")
 @route("/bad")
-def show_hosts():
+def show_errors():
     if not hosts_days_dict and is_redis_available():
         get_all_from_redis()
     return template(
@@ -259,7 +259,7 @@ def show_hosts():
 
 @route("/days")
 @route("/good")
-def show_hosts():
+def show_good():
     if not hosts_days_dict and is_redis_available():
         get_all_from_redis()
     return template(
@@ -277,10 +277,27 @@ def show_hosts():
     )
 
 
-# TODO: add update outdated from redis
+@route('/<host>')
+def show_host(host):
+    if not host in hosts_days_dict and is_redis_available():
+        get_host_info_from_redis(host)
+    if host in hosts_days_dict:
+        h_d=get_info_from_dict(
+                    hosts_dict={host:hosts_days_dict.get(host)}, info_type="all", truncate_errors=False)
+    else:
+        h_d = {host: ('unknown', 'unknown')}
+    return template(
+        "hosts",
+        hosts_days=h_d,
+        refresh=0,
+        hostname=hostname,
+        redis_available=f"{is_redis_available()}",
+        hosts_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
+        hosts_in_dashboard_cache=f"{len(hosts_days_dict)}",
+    ) 
 
 scheduler = BackgroundScheduler()
-# TODO: make update only if not info or outdated
+
 job1 = scheduler.add_job(
     update_outdated_from_redis, "interval", seconds=seconds_between_checks_for_outdating
 )

@@ -55,19 +55,10 @@
                 <a href="https://{{host}}">{{host}}</a>
             %end
             %if column == 2:
-                %days = hosts_bad[host][0]
-                %if not isinstance(days, int) or days < 30:
-                    <span class="_{{column}} red">
-                %elif days < 60:
-                    <span class="_{{column}} yellow">
-                %elif days < 90:
-                    <span class="_{{column}} green">
-                %else:
-                    <span class="_{{column}} default">
-                %end
-                    {{days}}
+                <span class="_{{column}} red">
+                <a href="/{{host}}">{{hosts_bad[host][0]}}</a>
+                </span>
             %end
-                    </span>
             %if column == 3:
                 {{hosts_bad[host][1]}}
             %end
