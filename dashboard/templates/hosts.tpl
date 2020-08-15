@@ -2,8 +2,8 @@
 
 
 <table>
-<caption><strong>SSL Certificate Expiration, Days</strong></caption>
-<tr><th>#</th><th>Hostname</th><th>Days befor expiration</th><th>Last info update</th></tr>
+<caption><strong>{{table_caption}}</strong></caption>
+<tr><th>#</th><th>Hostname</th><th>{{table_header}}</th><th>Last info update</th></tr>
 %i = 0
 %for host in hosts_days:
     <tr>
