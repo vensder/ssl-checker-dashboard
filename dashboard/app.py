@@ -103,9 +103,7 @@ def sync_with_redis():
 def update_outdated_from_redis():
     if is_redis_available():
         for host in hosts_days_dict:
-            updated = datetime.strptime(
-                hosts_days_dict[host][1], "%Y-%m-%d %H:%M:%S"
-            )
+            updated = datetime.strptime(hosts_days_dict[host][1], "%Y-%m-%d %H:%M:%S")
             diff = datetime.now() - updated
             if diff.days * 60 * 60 * 24 + diff.seconds > seconds_between_info_updates:
                 get_host_info_from_redis(host)
@@ -220,23 +218,6 @@ def show_all():
     )
 
 
-@route("/hosts")
-def show_hosts():
-    if not hosts_days_dict and is_redis_available():
-        get_all_from_redis()
-    return template(
-        "hosts",
-        hosts_days=sort_by_key(
-            get_info_from_dict(hosts_days_dict, info_type="all", truncate_errors=8)
-        ),
-        refresh=0,
-        hostname=hostname,
-        redis_available=f"{is_redis_available()}",
-        hosts_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
-        hosts_in_dashboard_cache=f"{len(hosts_days_dict)}",
-    )
-
-# TODO: Pass the name of the table for BAD
 @route("/errors")
 @route("/bad")
 def show_errors():
@@ -250,6 +231,8 @@ def show_errors():
             )
         ),
         refresh=0,
+        table_caption="SSL Certificates Errors",
+        table_header="Errors",
         hostname=hostname,
         redis_available=f"{is_redis_available()}",
         hosts_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
@@ -270,6 +253,8 @@ def show_good():
             )
         ),
         refresh=0,
+        table_caption="SSL Certificate Expiration, Days",
+        table_header="Days befor expiration",
         hostname=hostname,
         redis_available=f"{is_redis_available()}",
         hosts_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
@@ -277,24 +262,35 @@ def show_good():
     )
 
 
-@route('/<host>')
+@route("/<host>")
 def show_host(host):
+    table_caption = "SSL Certificate Expiration, Days"
+    table_header = "Days befor expiration"
     if not host in hosts_days_dict and is_redis_available():
         get_host_info_from_redis(host)
     if host in hosts_days_dict:
-        h_d=get_info_from_dict(
-                    hosts_dict={host:hosts_days_dict.get(host)}, info_type="all", truncate_errors=False)
+        h_d = get_info_from_dict(
+            hosts_dict={host: hosts_days_dict.get(host)},
+            info_type="all",
+            truncate_errors=False,
+        )
+        if type(hosts_days_dict.get(host)[0]) is str:
+            table_caption = "SSL Certificates Errors"
+            table_header = "Errors"
     else:
-        h_d = {host: ('unknown', 'unknown')}
+        h_d = {host: ("unknown", "unknown")}
     return template(
         "hosts",
         hosts_days=h_d,
         refresh=0,
+        table_caption=table_caption,
+        table_header=table_header,
         hostname=hostname,
         redis_available=f"{is_redis_available()}",
         hosts_in_redis=f"{r.dbsize() if is_redis_available() else 'unknown'}",
         hosts_in_dashboard_cache=f"{len(hosts_days_dict)}",
-    ) 
+    )
+
 
 scheduler = BackgroundScheduler()
 
