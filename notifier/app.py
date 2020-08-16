@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ
-import requests
+import urllib.request
 import json
 import schedule
 import time
@@ -19,10 +19,11 @@ def post_message(webhook_url, host, days):
         "username": "SSL-notifier",
         "icon_emoji": ":robot_face:",
     }
-    response = requests.post(
-        webhook_url, data=json.dumps(data), headers={"Content-Type": "application/json"}
+    req = urllib.request.Request(
+        webhook_url, data=json.dumps(data).encode('utf-8'), headers={"Content-Type": "application/json"}
     )
-    return response.status_code
+    resp = urllib.request.urlopen(req)
+    return resp.getcode()
 
 
 def send_info():
