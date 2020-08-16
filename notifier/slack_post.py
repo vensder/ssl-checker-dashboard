@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from os import environ
 import urllib.request
 import json
@@ -12,8 +10,10 @@ if "WEBHOOK_URL" in environ and environ["WEBHOOK_URL"]:
 
 
 def post_message(webhook_url, host, days):
+    if not webhook_url:
+        raise Exception("Empty webhook url")
     data = {
-        "text": f"The SSL certificate of the {host} host will expire in {days} days",
+        "text": f"The SSL certificate of {host} will expire in {days} day(s)",
         "username": "SSL-notifier",
         "icon_emoji": ":robot_face:",
     }
@@ -22,5 +22,9 @@ def post_message(webhook_url, host, days):
         data=json.dumps(data).encode("utf-8"),
         headers={"Content-Type": "application/json"},
     )
-    resp = urllib.request.urlopen(req)
-    return resp.getcode()
+    try:
+        resp = urllib.request.urlopen(req)
+        return resp.getcode()
+    except Exception as e:
+        print("Exception due to send message to slack:", str(e))
+        return str(e)
