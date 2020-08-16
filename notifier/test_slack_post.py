@@ -1,5 +1,6 @@
 import unittest
 import slack_post as sp
+from os import environ
 
 webhook_url = environ["secrets.SLACK_WEBHOOK_URL"]
 
