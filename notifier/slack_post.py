@@ -3,8 +3,6 @@
 from os import environ
 import urllib.request
 import json
-import schedule
-import time
 
 
 webhook_url = ""
