@@ -1,14 +1,7 @@
-env
-env3
-venv
 __pycache__
 **/__pycache__
 *.pyc
-
-.idea/
-
+Dockerfile
+env
+venv
 .vscode
-
-pid.file
-.env
-
