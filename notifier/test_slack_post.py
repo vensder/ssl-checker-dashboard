@@ -2,9 +2,7 @@ import unittest
 import slack_post as sp
 from os import environ
 
-webhook_url = environ["secrets.SLACK_WEBHOOK_URL"]
-
 class CheckResponseCode(unittest.TestCase):
     def test_response_code(self):
-        self.assertEqual(sp.post_message(webhook_url, "example.com", 5), 200)
+        self.assertEqual(sp.post_message(sp.webhook_url, "example.com", 5), 200)
 
