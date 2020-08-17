@@ -2,7 +2,7 @@
 
 [![Python application](https://github.com/vensder/ssl-checker-dashboard/workflows/Python%20application/badge.svg)](https://github.com/vensder/ssl-checker-dashboard/actions?query=workflow%3A%22Python+application%22)
 
-The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the hosts from the `checker/hosts.lst` file.
+The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the hosts from the `checker/hosts.lst` file and send notifications to Slack using Incoming Webhook.
 
 The dashboard built using Bottle Python micro web-framework and Docker and consist from the services: dashboard (scalable), redis, checker-service.
 
