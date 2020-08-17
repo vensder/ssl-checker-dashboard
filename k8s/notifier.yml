@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: notifier
-          image: vensder/ssl-cert-notifier:merge
+          image: vensder/ssl-cert-notifier:latest
           env:
             - name: PYTHONUNBUFFERED
               value: "1"
