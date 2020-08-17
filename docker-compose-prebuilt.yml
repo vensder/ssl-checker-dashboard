@@ -13,6 +13,16 @@ services:
     environment:
       - IS_FIRST_LOAD_FROM_FILE_ENABLED=True
 
+  notifier:
+    image: vensder/ssl-cert-notifier
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - NOTIFY_IF_DAYS_LEFT=20
+      - NOTIFY_EVERY_N_HOURS=8
+      - WEBHOOK_URL=https://hooks.slack.com/services/${SECRET_HOOK_END}
+
   dashboard:
     image: vensder/ssl-checker-dashboard
     ports:

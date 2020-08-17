@@ -19,6 +19,17 @@ services:
       - IS_HASH_SUM_CHECK_ENABLED=True
       - IS_FIRST_LOAD_FROM_FILE_ENABLED=True
 
+  notifier:
+    build:
+      context: ./notifier
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - NOTIFY_IF_DAYS_LEFT=20
+      - NOTIFY_EVERY_N_HOURS=8
+      - WEBHOOK_URL=https://hooks.slack.com/services/${SECRET_HOOK_END}
+
   dashboard:
     build:
       context: ./dashboard
