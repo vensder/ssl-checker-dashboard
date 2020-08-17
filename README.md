@@ -86,3 +86,27 @@ Or, if you use Kubernetes, copy your file inside the `checker` Pod, for example:
 kubectl cp path-to/your_hosts.lst \
  default/$(kubectl get pods -l app=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
 ```
+
+## How to run notifier with your Slack Webhook
+
+To run notifier service you need to pass Slack webhook URL to environment variable `WEBHOOK_URL` inside the container.
+
+To do that using docker-compose, you just need to create a file `.env` with content:
+
+```yaml
+WEBHOOK_URL_FROM_SECRET_ENV_FILE=https://hooks.slack.com/services/xxx/yyy/zzz
+```
+
+And after the command `docker-compose up notifier` this environment variable will be injected inside the `notifier` container.
+
+To pass that environment variable to k8s Pod create the `slack-webhook` secret from the same `.env` file:
+
+```bash
+kubectl create secret generic slack-webhook --from-literal=webhook=$(cat .env | cut -d'=' -f2)
+```
+
+And after that run the `notifier` deployment:
+
+```bash
+kubectl apply -f ./k8s/notifier.yml
+```

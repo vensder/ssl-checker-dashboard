@@ -28,7 +28,7 @@ services:
       - REDIS_HOST=redis
       - NOTIFY_IF_DAYS_LEFT=20
       - NOTIFY_EVERY_N_HOURS=8
-      - WEBHOOK_URL=https://hooks.slack.com/services/${SECRET_HOOK_END}
+      - WEBHOOK_URL=${WEBHOOK_URL_FROM_SECRET_ENV_FILE}
 
   dashboard:
     build:
