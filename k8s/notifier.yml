@@ -1,0 +1,36 @@
+---
+# notifier
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifier
+  labels:
+    app: notifier
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifier
+  template:
+    metadata:
+      labels:
+        app: notifier
+    spec:
+      containers:
+        - name: notifier
+          image: vensder/ssl-cert-notifier:latest
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: NOTIFY_IF_DAYS_LEFT
+              value: "20"
+            - name: NOTIFY_EVERY_N_HOURS
+              value: "8"
+            - name: WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: slack-webhook
+                  key: webhook
+
