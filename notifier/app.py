@@ -13,6 +13,8 @@ redis_host = "redis"
 if "REDIS_HOST" in environ and environ["REDIS_HOST"]:
     redis_host = environ["REDIS_HOST"]
 
+# days_before_to_notify
+# days_left_to_notify
 notify_if_days_left = 30
 if "NOTIFY_IF_DAYS_LEFT" in environ and environ["NOTIFY_IF_DAYS_LEFT"]:
     notify_if_days_left = int(environ["NOTIFY_IF_DAYS_LEFT"])
@@ -40,25 +42,19 @@ def notify_expiring_soon():
     if is_redis_available():
         for host in r.keys("*"):
             if r.hget(host, "exp"):
-                host, expire_unix_time = (
-                    host.decode("utf-8"),
-                    r.hget(host, "exp").decode("utf-8"),
-                )
-                if expire_unix_time.isnumeric() or type(expire_unix_time) is int:
-                    if (
-                        int(expire_unix_time)
-                        < datetime.now().timestamp()
-                        + notify_if_days_left * 24 * 60 * 60
-                    ):
-                        days = round(
-                            (int(expire_unix_time) - datetime.now().timestamp()) / 86400
-                        )
-
+                host = host.decode("utf-8")
+                expire_unix_time = r.hget(host, "exp").decode("utf-8")
+                if expire_unix_time.isnumeric():
+                    seconds_left = int(expire_unix_time) - datetime.now().timestamp()
+                    if seconds_left <= notify_if_days_left * 86400:
+                        days_left = seconds_left // 86400
                         if not r.hget(host, "notified") or not strtobool(
                             r.hget(host, "notified").decode("utf-8")
                         ):
-                            print(f"SSL cert of {host} will expire in {days} day(s)")
-                            send_notification(host, days)
+                            print(
+                                f"SSL cert of {host} will expire in {days_left} day(s)"
+                            )
+                            send_notification(host, days_left)
                             r.hset(host, "notified", "True")
 
 
