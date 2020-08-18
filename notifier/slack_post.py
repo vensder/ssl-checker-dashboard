@@ -9,11 +9,17 @@ if "WEBHOOK_URL" in environ and environ["WEBHOOK_URL"]:
     webhook_url = environ["WEBHOOK_URL"]
 
 
-def post_message(webhook_url, host, days):
+def compose_message(hosts_days_dict):
+    message_text = ""
+    for host in hosts_days_dict:
+        message_text += f"\nThe SSL certificate of {host} will expire in {hosts_days_dict[host]} day(s)"
+    return message_text
+
+def post_message(webhook_url, hosts_days_dict):
     if not webhook_url:
         raise Exception("Empty webhook url")
     data = {
-        "text": f"The SSL certificate of {host} will expire in {days} day(s)",
+        "text": compose_message(hosts_days_dict),
         "username": "SSL-notifier",
         "icon_emoji": ":robot_face:",
     }

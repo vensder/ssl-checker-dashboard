@@ -24,8 +24,8 @@ if "NOTIFY_EVERY_N_HOURS" in environ and environ["NOTIFY_EVERY_N_HOURS"]:
     notify_every_n_hours = float(environ["NOTIFY_EVERY_N_HOURS"])
 
 
-def send_notification(host, days):
-    response_code = post_message(webhook_url, host, days)
+def send_notification(hosts_days_dict):
+    response_code = post_message(webhook_url, hosts_days_dict)
     return response_code
 
 
@@ -40,6 +40,7 @@ def is_redis_available():
 
 def notify_expiring_soon():
     if is_redis_available():
+        hosts_days_dict = dict()
         for host in r.keys("*"):
             if r.hget(host, "exp"):
                 host = host.decode("utf-8")
@@ -54,8 +55,13 @@ def notify_expiring_soon():
                             print(
                                 f"SSL cert of {host} will expire in {days_left} day(s)"
                             )
-                            send_notification(host, days_left)
-                            r.hset(host, "notified", "True")
+                            hosts_days_dict[host] = days_left
+        if hosts_days_dict:
+            response = send_notification(hosts_days_dict)
+            if response == 200:
+                for host in hosts_days_dict:
+                    r.hset(host, "notified", "True")
+            
 
 
 def delete_notified_mark():
