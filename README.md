@@ -4,7 +4,7 @@
 
 The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the hosts from the `checker/hosts.lst` file and send notifications to Slack using Incoming Webhook.
 
-This project was created for the purpose of self-education.
+This project created for self-education.
 
 The dashboard built using Bottle Python micro web-framework and Docker and consist of the services: dashboard (scalable), Redis, checker and notifier services.
 
