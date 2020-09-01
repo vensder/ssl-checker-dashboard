@@ -16,13 +16,23 @@ jobs:
     steps:
     - name: Checkout the code
       uses: actions/checkout@v2
-    - name: Build the Docker image
+
+    - name: Build dashboard Docker image
       run: docker build dashboard/ --file dashboard/Dockerfile --tag localbuild/ssl-checker-dashboard:latest      
     - name: Run the local Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
       uses: anchore/scan-action@master
       with:
         image-reference: "localbuild/ssl-checker-dashboard:latest"
         dockerfile-path: "dashboard/Dockerfile"
+        acs-report-enable: true
+
+    - name: Build checker Docker image
+      run: docker build checker/ --file checker/Dockerfile --tag localbuild/ssl-cert-checker:latest      
+    - name: Run the local Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
+      uses: anchore/scan-action@master
+      with:
+        image-reference: "localbuild/ssl-cert-checker:latest"
+        dockerfile-path: "checker/Dockerfile"
         acs-report-enable: true
     - name: Upload Anchore Scan Report
       uses: github/codeql-action/upload-sarif@v1
