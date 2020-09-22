@@ -83,13 +83,16 @@ metadata:
   name: dashboard
 spec:
   rules:
-    - host: ssl-checks.local
+    - host: "ssl-checks.local"
       http:
         paths:
-          - path: /
+          - pathType: Prefix
+            path: "/"
             backend:
-              serviceName: dashboard
-              servicePort: 8080
+              service:
+                name: dashboard
+                port:
+                  number: 8080
 ---
 # redis
 apiVersion: v1
