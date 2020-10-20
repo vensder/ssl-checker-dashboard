@@ -112,3 +112,13 @@ And after that run the `notifier` deployment:
 ```bash
 kubectl apply -f ./k8s/notifier.yml
 ```
+
+## Playing with Linkerd
+
+```bash
+sudo snap install microk8s --classic
+sudo microk8s enable dns ingress linkerd
+sudo ln -s /snap/microk8s/current/kubectl /usr/bin/kubectl
+ln -s /var/snap/microk8s/current/credentials/client.config $HOME/.kube/config
+```
+

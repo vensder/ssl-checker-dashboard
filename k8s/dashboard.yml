@@ -77,7 +77,8 @@ spec:
   selector:
     app: dashboard
 ---
-apiVersion: networking.k8s.io/v1
+# apiVersion: networking.k8s.io/v1  # for the 1.19 version
+apiVersion: networking.k8s.io/v1beta1  # for the 1.18 version 
 kind: Ingress
 metadata:
   name: dashboard
@@ -89,10 +90,12 @@ spec:
           - pathType: Prefix
             path: "/"
             backend:
-              service:
-                name: dashboard
-                port:
-                  number: 8080
+              serviceName: dashboard
+              servicePort: 8080
+              # service:
+              #   name: dashboard
+              #   port:
+              #     number: 8080
 ---
 # redis
 apiVersion: v1
