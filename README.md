@@ -115,6 +115,10 @@ kubectl apply -f ./k8s/notifier.yml
 
 ## Playing with Linkerd and MicroK8s
 
+Currently the latest stable versions of MicroK8s (1.19) and Linkerd (2.8.1) are not compatible because of the bug (see https://github.com/linkerd/linkerd2/issues/4918).
+
+But the edge version of Linkerd is Ok.
+
 ```bash
 sudo snap install microk8s --classic
 microk8s enable ingress rbac dns
