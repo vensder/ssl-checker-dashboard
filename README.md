@@ -4,7 +4,7 @@
 
 The SSL Checker Dashboard allows you to overview the expiration days for the SSL certificates of the hosts from the `checker/hosts.lst` file and send notifications to Slack using Incoming Webhook.
 
-This project created for self-education.
+This project created for self-education purposes.
 
 The dashboard built using Bottle Python micro web-framework and Docker and consist of the services: dashboard (scalable), Redis, checker and notifier services.
 
@@ -115,7 +115,7 @@ kubectl apply -f ./k8s/notifier.yml
 
 ## Playing with Linkerd and MicroK8s
 
-Currently the latest stable versions of MicroK8s (1.19) and Linkerd (2.8.1) are not compatible because of the bug (see https://github.com/linkerd/linkerd2/issues/4918).
+Currently, the latest stable versions of MicroK8s (1.19) and Linkerd (2.8.1) are not compatible because of the bug (see https://github.com/linkerd/linkerd2/issues/4918).
 
 But the edge version of Linkerd is Ok.
 
