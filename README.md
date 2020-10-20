@@ -144,3 +144,4 @@ kubectl cp tests/hosts_large.lst \
 ab -c 100 -n 10000 http://ssl-checks.local/all
 ```
 
+![Linkerd Grafana](./img/linkerd.png?raw=true)

@@ -168,4 +168,4 @@ spec:
             - name: IS_HASH_SUM_CHECK_ENABLED
               value: "True"
             - name: IS_FIRST_LOAD_FROM_FILE_ENABLED
-              value: "False"
+              value: "True"
