@@ -113,12 +113,30 @@ And after that run the `notifier` deployment:
 kubectl apply -f ./k8s/notifier.yml
 ```
 
-## Playing with Linkerd
+## Playing with Linkerd and MicroK8s
 
 ```bash
 sudo snap install microk8s --classic
-sudo microk8s enable dns ingress linkerd
+microk8s enable ingress rbac dns
+curl -sL https://run.linkerd.io/install-edge | sh
 sudo ln -s /snap/microk8s/current/kubectl /usr/bin/kubectl
 ln -s /var/snap/microk8s/current/credentials/client.config $HOME/.kube/config
+linkerd install | kubectl apply -f -
+linkerd check
+kubectl -n linkerd get deploy
+linkerd dashboard
+kubectl apply -f k8s/dashboard.yml 
+kubectl get -n default deploy -o yaml | linkerd inject - | kubectl apply -f -
+kubectl get pods 
+linkerd check --proxy 
+linkerd stat deploy
+linkerd top deploy
+linkerd tap deploy/dashboard 
+kubectl cp tests/hosts_medium.lst \
+ default/$(kubectl get pods -l app=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
+ab -c 100 -n 10000 http://ssl-checks.local/all
+kubectl cp tests/hosts_large.lst \
+ default/$(kubectl get pods -l app=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
+ab -c 100 -n 10000 http://ssl-checks.local/all
 ```
 
