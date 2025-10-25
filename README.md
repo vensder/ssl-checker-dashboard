@@ -14,6 +14,8 @@ You can run it in Kubernetes (see `./k8s` directory)
 
 ![SSL Checker Dashboard](./img/screenshot.png?raw=true)
 
+![Slack Screenshot](./img/Screenshot_slack.png?raw=true)
+
 ## How to run locally
 
 ```bash
