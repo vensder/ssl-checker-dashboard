@@ -37,11 +37,11 @@ ab -c 100 -n 10000 http://127.0.0.1:8080/all
 Tested in MicroK8s: <https://microk8s.io/>. How to configure MicroK8s: <https://microk8s.io/docs>.
 
 ```bash
-sudo microk8s enable dns ingress
+microk8s enable dns ingress
 ```
 
 ```bash
-kubectl apply -f ./k8s/dashboard.yml
+microk8skubectl apply -f ./k8s/dashboard.yml
 deployment.apps/dashboard created
 service/dashboard created
 ingress.networking.k8s.io/dashboard created
@@ -51,7 +51,7 @@ deployment.apps/checker created
 ```
 
 ```bash
-kubectl get ingress
+microk8s kubectl get ingress
 NAME      CLASS    HOSTS              ADDRESS     PORTS   AGE
 dashboard   <none>   ssl-checks.local   127.0.0.1   80      47s
 ```
@@ -87,8 +87,8 @@ docker cp path-to/your_hosts.lst ssl-checker-dashboard_checker_1:/home/app/hosts
 Or, if you use Kubernetes, copy your file inside the `checker` Pod, for example:
 
 ```bash
-kubectl cp path-to/your_hosts.lst \
- default/$(kubectl get pods -l app=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
+microk8s kubectl cp path-to/your_hosts.lst \
+ default/$(microk8s kubectl get pods -l app=checker --no-headers=true | cut -d' ' -f1):/home/app/hosts.lst
 ```
 
 ## How to run notifier with your Slack Webhook
