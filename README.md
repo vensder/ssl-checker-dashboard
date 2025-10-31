@@ -41,7 +41,7 @@ microk8s enable dns ingress
 ```
 
 ```bash
-microk8skubectl apply -f ./k8s/dashboard.yml
+microk8s kubectl apply -f ./k8s/dashboard.yml
 deployment.apps/dashboard created
 service/dashboard created
 ingress.networking.k8s.io/dashboard created
