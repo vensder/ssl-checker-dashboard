@@ -3,24 +3,24 @@
 set -e -x
 
 remove_all_containers () {
-  docker-compose -f docker-compose-test.yml stop -t 0
-  docker-compose -f docker-compose-test.yml rm -f
+  docker compose -f docker-compose-test.yml stop -t 0
+  docker compose -f docker-compose-test.yml rm -f
 }
 
 build_images () {
-  docker-compose -f docker-compose-test.yml build "$@"
+  docker compose -f docker-compose-test.yml build "$@"
 }
 
 up_containers () {
-  docker-compose -f docker-compose-test.yml up -d "$@"
+  docker compose -f docker-compose-test.yml up -d "$@"
 }
 
 list_all_containers () {
-  docker-compose -f docker-compose-test.yml ps
+  docker compose -f docker-compose-test.yml ps
 }
 
 logs_containers () {
-  docker-compose -f docker-compose-test.yml logs "$@"
+  docker compose -f docker-compose-test.yml logs "$@"
 }
 
 test_dashboard () {
@@ -35,7 +35,7 @@ test_dashboard () {
 }
 
 get_redis_keys () {
-  docker-compose -f docker-compose-test.yml exec -T redis redis-cli --scan
+  docker compose -f docker-compose-test.yml exec -T redis redis-cli --scan
 }
 
 remove_all_containers
