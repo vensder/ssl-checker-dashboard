@@ -53,14 +53,14 @@ list_all_containers
 logs_containers "dashboard"
 test_dashboard
 
-docker cp tests/hosts_medium.lst ssl-checker-dashboard_checker_1:/home/app/hosts.lst
+docker cp tests/hosts_medium.lst ssl-checker-dashboard-checker-1:/home/app/hosts.lst
 sleep 30
 list_all_containers
 logs_containers "redis" "checker"
 get_redis_keys
 test_dashboard
 
-docker cp tests/hosts_large.lst ssl-checker-dashboard_checker_1:/home/app/hosts.lst
+docker cp tests/hosts_large.lst ssl-checker-dashboard-checker-1:/home/app/hosts.lst
 sleep 30
 list_all_containers
 logs_containers "redis" "checker"
