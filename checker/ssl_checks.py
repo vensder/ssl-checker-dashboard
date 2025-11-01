@@ -7,6 +7,8 @@ from datetime import datetime
 
 def expiration_datetime(hostname):
     context = ssl.create_default_context()
+    # Enforce minimum TLS version 1.2 to address security vulnerability
+    context.minimum_version = ssl.TLSVersion.TLSv1_2
     conn = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=hostname,)
     conn.settimeout(3.0)
     conn.connect((hostname, 443))
