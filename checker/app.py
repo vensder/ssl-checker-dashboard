@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 
 import schedule
 import time
@@ -7,7 +7,8 @@ import redis
 from multiprocessing.pool import ThreadPool as Pool
 import hashlib
 from os import environ
-from distutils.util import strtobool
+# from distutils.util import strtobool
+from str_to_bool import str_to_bool as strtobool
 
 redis_host = "redis"
 if "REDIS_HOST" in environ and environ["REDIS_HOST"]:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 
 from bottle import route, run, hook, request, default_app, HTTPResponse
 from bottle import TEMPLATE_PATH, template, static_file
