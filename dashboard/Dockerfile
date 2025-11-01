@@ -1,4 +1,4 @@
-FROM python:3.8.5-alpine3.12
+FROM python:3.13.3-alpine3.22
 
 ARG USER="app"
 ARG GROUP="app"

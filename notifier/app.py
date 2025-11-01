@@ -6,7 +6,8 @@ from slack_post import webhook_url, post_message
 import redis
 from os import environ
 from datetime import datetime
-from distutils.util import strtobool
+# from distutils.util import strtobool
+from str_to_bool import str_to_bool as strtobool
 
 
 redis_host = "redis"
@@ -61,7 +62,7 @@ def notify_expiring_soon():
             if response == 200:
                 for host in hosts_days_dict:
                     r.hset(host, "notified", "True")
-            
+
 
 
 def delete_notified_mark():
